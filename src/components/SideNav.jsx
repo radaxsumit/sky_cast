@@ -17,11 +17,11 @@ const SidebarLink = ({icon, active}) => {
     )
 }
 
-export const SideNav = () => {
+export const SideNav = ({isDarkMode}) => {
     return (
         <div
-            className="fixed left-0 top-0 bottom-0 w-20 bg-white border-r border-slate-100 flex flex-col items-center py-8 hidden:md:flex z-50 transition-all duration-500">
-            <div className="mb-12 p-3 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-200">
+            className="fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center py-8 hidden:md:flex z-50 transition-all duration-500">
+            <div className="mb-12 p-3 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/20">
                 <Cloud/>
             </div>
 
