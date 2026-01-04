@@ -16,6 +16,8 @@ dist-ssr/
 
 # Environment variables (SECRETS)
 .env
+/src/.env.*
+/src/.env
 .env.local
 .env.*
 
