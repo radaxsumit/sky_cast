@@ -16,10 +16,16 @@ dist-ssr/
 
 # Environment variables (SECRETS)
 .env
-/src/.env.*
-/src/.env
 .env.local
+/src/.env.*
+/.env
+.env.development.local
+.env.production.local
+.env.test.local
 .env.*
+
+# Ignore everything except example
+!.env.example
 
 # Editor directories and files
 .vscode/*

@@ -1,14 +1,18 @@
 import React from 'react'
 import {Search, MapPin, Moon, Sun, Loader2} from 'lucide-react';
 
-const Header = ({isDarkMode, togglrDarkMode}) => {
+
+const Header = ({isDarkMode, toggleDarkMode, weatherData, forecast}) => {
+    const {
+        location , day
+    } = weatherData;
     return (
         <header className="flex flex-col md:flex-row items-center justify-between gap-6 ">
             <div className="flex-shrink-0">
                 <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">WeatherDashboard</h1>
                 <div className="flex gap-2 mt-1 items-center text-slate-400">
                     <MapPin className="w-4 h-4 text-indigo-500"/>
-                    <span className="text-sm font-medium">location • date</span>
+                    <span className="text-sm font-medium">{location} • {day} </span>
                 </div>
             </div>
 
@@ -35,7 +39,7 @@ const Header = ({isDarkMode, togglrDarkMode}) => {
                     <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"/>
 
                     <button
-                        onClick={togglrDarkMode}
+                        onClick={toggleDarkMode}
                         aria-label="Toggel Theme"
                         className=" p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900 transition-all">
                         {isDarkMode ? <Sun className="w-5 h-5"/> : <Moon className="w-5 h-5"/>}
