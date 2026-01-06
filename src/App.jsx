@@ -4,7 +4,7 @@ import {Loader2} from 'lucide-react';
 import Header from "./components/Header.jsx";
 import {MainWeatherCard} from "./components/MainWeatherCard.jsx";
 import {TempChart} from "./components/TempChart.jsx";
-import WeatherStatsGrid from "./components/WeatherStatsGrid.jsx";
+import {WeatherStatsGrid} from "./components/WeatherStatsGrid.jsx"
 import {ForecastList} from "./components/ForecastList.jsx";
 import {useWeather} from "./hooks/useWeather";
 
@@ -82,7 +82,7 @@ const App = () => {
                             <div className="lg:col-span-8 flex flex-col gap-8">
                                 <MainWeatherCard weatherData={weather} forecast={forecast} />
                                 {/*<TempChart/>*/}
-                                {/*<WeatherStatsGrid/>*/}
+                                <WeatherStatsGrid weatherData={weather} isDarkMode={isDarkMode} />
                             </div>
 
                             <div className="lg:col-span-4 h-full">
