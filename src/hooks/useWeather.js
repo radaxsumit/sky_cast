@@ -2,8 +2,8 @@ import { getCurrentWeather } from "../services/weatherApi.js";
 import { useState } from "react";
 
 export const useWeather = () => {
-    const [weather, setWeather] = useState(null);
-    const [forecast, setForecast] = useState(null);
+    const [current, setCurrent] = useState(null);
+    const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -12,38 +12,46 @@ export const useWeather = () => {
 
         setLoading(true);
         setError(null);
+        const data = await getCurrentWeather(city);
+
+
 
         try {
             const data = await getCurrentWeather(city);
 
-            // ✅ NORMALIZE DATA HERE (VERY IMPORTANT)
-            setWeather({
+            setCurrent({
+                location: data.location.name,
+                country: data.location.country,
                 temperature: data.current.temp_c,
+                temp_f: data.current.temp_f,
+                feelsLike: data.current.feelslike_c,
+                condition: data.current.condition.text,
+                icon: data.current.condition.icon,
+
                 humidity: data.current.humidity,
                 windSpeed: data.current.wind_kph,
                 pressure: data.current.pressure_mb,
                 visibility: data.current.vis_km,
-                location: data.location.name,
-                country: data.location.country,
-                condition: data.current.condition.text,
-                icon: data.current.condition.icon,
+
+                localTime: data.location.localtime,
+                date: data.forecast.forecastday[0].date,
 
                 aqi: data.current.air_quality["us-epa-index"],
-                pm25: data.current.air_quality.pm2_5,
-                pm10: data.current.air_quality.pm10,
             });
 
-            // ✅ Normalize FORECAST
-            const normalizedForecast = data.forecast.forecastday.map(day => ({
-                date: day.date,
-                minTemp: Math.round(day.day.mintemp_c),
-                maxTemp: Math.round(day.day.maxtemp_c),
-                condition: day.day.condition.text,
-                icon: day.day.condition.icon,
-            }));
-
-            setForecast(normalizedForecast);
-
+            setForecast(
+                data.forecast.forecastday.map(day => ({
+                    date: day.date,
+                    day: new Date(day.date).toLocaleDateString("en-US", {
+                        weekday: "short", // Mon, Tue
+                    }),
+                    minTemp: Math.round(day.day.mintemp_c),
+                    maxTemp: Math.round(day.day.maxtemp_c),
+                    condition: day.day.condition.text,
+                    icon: day.day.condition.icon,
+                }))
+            );
+            // const dayNameShort = day.date.toLocaleDateString('en-US', optionsShort)
         } catch (e) {
             setError(
                 e instanceof Error ? e.message : "Something went wrong"
@@ -53,7 +61,5 @@ export const useWeather = () => {
         }
     };
 
-    // ❌ REMOVE useEffect COMPLETELY FROM HOOK
-
-    return { weather, loading, error, forecast, fetchWeatherByCity };
+    return { current, forecast, loading, error, fetchWeatherByCity };
 };

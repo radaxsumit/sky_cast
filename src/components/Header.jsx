@@ -2,9 +2,9 @@ import React from 'react'
 import {Search, MapPin, Moon, Sun, Loader2} from 'lucide-react';
 
 
-const Header = ({isDarkMode, toggleDarkMode, weatherData, forecast}) => {
+const Header = ({isDarkMode, toggleDarkMode, weatherData}) => {
     const {
-        location , day
+        location , date ,localTime
     } = weatherData;
     return (
         <header className="flex flex-col md:flex-row items-center justify-between gap-6 ">
@@ -12,7 +12,7 @@ const Header = ({isDarkMode, toggleDarkMode, weatherData, forecast}) => {
                 <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">WeatherDashboard</h1>
                 <div className="flex gap-2 mt-1 items-center text-slate-400">
                     <MapPin className="w-4 h-4 text-indigo-500"/>
-                    <span className="text-sm font-medium">{location} • {day} </span>
+                    <span className="text-sm font-medium">{location} • {date} </span>
                 </div>
             </div>
 

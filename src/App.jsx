@@ -11,10 +11,10 @@ import {useWeather} from "./hooks/useWeather";
 
 const App = () => {
 
-    const {weather, forecast, loading, error, fetchWeatherByCity,} = useWeather();
+    const {current, forecast, loading, error, fetchWeatherByCity,} = useWeather();
 
     useEffect(() => {
-        fetchWeatherByCity("Jaipur");
+        fetchWeatherByCity("jaipur");
     }, []);
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -67,34 +67,36 @@ const App = () => {
 
             <main className="flex-1 flex flex-col p-4 md:p-8 lg:p-10 ml-0 md:ml-20 overflow-x-hidden relative ">
                 {/* Top loading bar */}
-                {loading && weather && (
+                {loading && current && (
                     <div className="absolute top-0 left-0 right-0 h-1 z-[60] overflow-hidden">
                         <div
                             className="h-full bg-indigo-500 animate-[shimmer_1.5s_infinite] w-1/3 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
                     </div>
                 )}
 
-                {weather && (
-                    <div className={`flex flex-col transition-all duration-700 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
-                        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} weatherData={weather} forecast={forecast} />
+                {current && (
+                    <div
+                        className={`flex flex-col transition-all duration-700 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
+                        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} weatherData={current}/>
 
                         <div className="grid grid-cols-12  gap-8 mt-8">
                             <div className="lg:col-span-8 flex flex-col gap-8">
-                                <MainWeatherCard weatherData={weather} forecast={forecast} />
-                                {/*<TempChart/>*/}
-                                <WeatherStatsGrid weatherData={weather} isDarkMode={isDarkMode} />
+                                <MainWeatherCard weatherData={current} />
+                                <TempChart/>
+                                <WeatherStatsGrid weatherData={current} isDarkMode={isDarkMode}/>
                             </div>
 
                             <div className="lg:col-span-4 h-full">
-                                {/*<ForecastList/>*/}
+                                <ForecastList forecast={forecast}/>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {error && !weather && (
+                {error && !current && (
                     <div className="flex-1 flex items-center justify-center">
-                        <div className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30 text-red-600 p-6 rounded-2xl border max-w-md text-center">
+                        <div
+                            className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30 text-red-600 p-6 rounded-2xl border max-w-md text-center">
                             <p className="font-semibold text-lg mb-2 text-red-700 dark:text-red-400">
                                 Connection Error
                             </p>

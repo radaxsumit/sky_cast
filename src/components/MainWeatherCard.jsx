@@ -1,7 +1,6 @@
 import React from "react";
 import {Cloud, Droplets, Eye, Gauge, MoreHorizontal} from "lucide-react";
 
-
 const Stat = ({ icon, label, value}) => (<div className="flex flex-col items-center">
     <div className="flex items-center gap-2 text-white/60">
         {icon}
@@ -12,11 +11,11 @@ const Stat = ({ icon, label, value}) => (<div className="flex flex-col items-cen
 
 const Divider = () => (<div className="h-8 w-[2px] bg-white/20"></div>);
 
-export const MainWeatherCard = ({weatherData, forecast=[]}) => {
+export const MainWeatherCard = ({weatherData}) => {
     if (!weatherData) return null;
 
     const {
-        temperature, humidity, windSpeed, pressure, visibility, location, icon, airQuality,condition
+        temperature, humidity, windSpeed, pressure, visibility, icon, airQuality,condition
     } = weatherData;
 
     return (
@@ -46,12 +45,11 @@ export const MainWeatherCard = ({weatherData, forecast=[]}) => {
                     </div>
 
                     <div className="drop-shadow-2xl">
-                        {/*<img*/}
-                        {/*    src={weatherData.icon}*/}
-                        {/*    alt={weatherData.condition}*/}
-                        {/*    className="h-48 w-48"*/}
-                        {/*/>*/}
-                        <Cloud className="h-50 w-50 animate-pulse"/>
+                        <img
+                            src={weatherData.icon}
+                            alt={weatherData.condition}
+                            className="h-48 w-48"
+                        />
                     </div>
                 </div>
 
