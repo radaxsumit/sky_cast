@@ -2,7 +2,7 @@ import React from 'react'
 import {Search, MapPin, Moon, Sun, Loader2} from 'lucide-react';
 
 
-const Header = ({isDarkMode, toggleDarkMode, weatherData}) => {
+const Header = ({isDarkMode, toggleDarkMode, weatherData, unit, toggleUnit}) => {
     const {
         location , date ,localTime
     } = weatherData;
@@ -32,8 +32,12 @@ const Header = ({isDarkMode, toggleDarkMode, weatherData}) => {
                 <div
                     className="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-all ">
                     <div className=" flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800">
-                        <button className="px-3 py-1.5 rounded-lg text-xs dark:text-slate-400 font-bold transition-all">°C</button>
-                        <button className="px-3 py-1.5 rounded-lg text-xs dark:text-slate-400 font-bold transition-all">°F</button>
+                        <button
+                            onClick={toggleUnit}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${unit === 'C' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}>°C</button>
+                        <button
+                            onClick={toggleUnit}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${unit === 'C' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}>°F</button>
                     </div>
 
                     <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"/>

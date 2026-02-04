@@ -4,6 +4,7 @@ import { useState } from "react";
 export const useWeather = () => {
     const [current, setCurrent] = useState(null);
     const [forecast, setForecast] = useState([]);
+    const [hourlyData, setHourlyData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -33,6 +34,9 @@ export const useWeather = () => {
                 pressure: data.current.pressure_mb,
                 visibility: data.current.vis_km,
 
+                sunrise: data.forecast.forecastday[0].astro.sunrise,
+                sunset: data.forecast.forecastday[0].astro.sunset,
+
                 localTime: data.location.localtime,
                 date: data.forecast.forecastday[0].date,
 
@@ -51,7 +55,14 @@ export const useWeather = () => {
                     icon: day.day.condition.icon,
                 }))
             );
-            // const dayNameShort = day.date.toLocaleDateString('en-US', optionsShort)
+            // ⏰ HOURLY DATA (FOR CHART)
+            setHourlyData(
+                data.forecast.forecastday[0].hour.map(h => ({
+                    time: h.time.split(" ")[1], // "14:00"
+                    temp: h.temp_c,
+                }))
+            );
+
         } catch (e) {
             setError(
                 e instanceof Error ? e.message : "Something went wrong"
@@ -61,5 +72,5 @@ export const useWeather = () => {
         }
     };
 
-    return { current, forecast, loading, error, fetchWeatherByCity };
+    return { current, forecast, hourlyData, loading, error, fetchWeatherByCity };
 };

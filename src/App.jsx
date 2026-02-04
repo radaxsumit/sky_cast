@@ -11,10 +11,10 @@ import {useWeather} from "./hooks/useWeather";
 
 const App = () => {
 
-    const {current, forecast, loading, error, fetchWeatherByCity,} = useWeather();
+    const {current, forecast, hourlyData, loading, error, fetchWeatherByCity,} = useWeather();
 
     useEffect(() => {
-        fetchWeatherByCity("jaipur");
+        fetchWeatherByCity("Jaipur");
     }, []);
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -36,6 +36,7 @@ const App = () => {
     }, [isDarkMode]);
 
     const toggleDarkMode = () => setIsDarkMode(prev => !prev);
+
     const [unit, setUnit] = useState("F"); // "F" | "C"
 
     const toggleUnit = () => {
@@ -62,7 +63,7 @@ const App = () => {
     }
     return (
         <div
-            className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
+            className="flex min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
             <SideNav isDarkMode={isDarkMode}/>
 
             <main className="flex-1 flex flex-col p-4 md:p-8 lg:p-10 ml-0 md:ml-20 overflow-x-hidden relative ">
@@ -77,12 +78,12 @@ const App = () => {
                 {current && (
                     <div
                         className={`flex flex-col transition-all duration-700 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
-                        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} weatherData={current}/>
+                        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} weatherData={current} unit={unit} toggleUnit={toggleUnit} />
 
                         <div className="grid grid-cols-12  gap-8 mt-8">
                             <div className="lg:col-span-8 flex flex-col gap-8">
-                                <MainWeatherCard weatherData={current} />
-                                <TempChart/>
+                                <MainWeatherCard weatherData={current} forecast={forecast} unit={unit} convertTemp={convertTemp} />
+                                <TempChart weatherData={current} isDarkMode={isDarkMode} hourlyData={hourlyData} converTemp={convertTemp} unit={unit}/>
                                 <WeatherStatsGrid weatherData={current} isDarkMode={isDarkMode}/>
                             </div>
 

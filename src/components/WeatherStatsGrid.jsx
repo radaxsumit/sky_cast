@@ -39,8 +39,10 @@ const StatCard = ({ icon, label, value, badge, badgeColor, subtext }) => (
 export const WeatherStatsGrid = ({ weatherData , isDarkMode }) => {
 
     const {
-        temperature, humidity, windSpeed, pressure, visibility, location, icon, airQuality,condition
+        temperature, humidity, windSpeed, pressure, visibility, location, icon, airQuality,condition,
     } = weatherData;
+
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <StatCard
@@ -68,9 +70,10 @@ export const WeatherStatsGrid = ({ weatherData , isDarkMode }) => {
             <StatCard
                 icon={<Sunrise />}
                 label="Sunrise & Sunset"
-                // value={weather.sunrise}
-                // subtext={`Sunset: ${weather.sunset}`}
+                value={weatherData.sunrise}
+                subtext={`Sunset: ${weatherData.sunset}`}
             />
+
         </div>
     );
 };
