@@ -11,11 +11,39 @@ import {useWeather} from "./hooks/useWeather";
 
 const App = () => {
 
-    const {current, forecast, hourlyData, loading, error, fetchWeatherByCity,} = useWeather();
+    const { current, forecast, hourlyData, loading, error, fetchWeather } = useWeather();
 
     useEffect(() => {
-        fetchWeatherByCity("Jaipur");
+        if (!navigator.geolocation) {
+            console.log("Geolocation not supported");
+            fetchWeather("Delhi"); // fallback
+            return;
+        }
+
+        // Optional: Check permission state
+        if (navigator.permissions) {
+            navigator.permissions.query({ name: "geolocation" }).then((result) => {
+                if (result.state === "prompt") {
+                    alert("Allow location access to see weather of your area 🌍");
+                }
+            });
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                // 🔥 Call your weather hook using lat & lon
+                fetchWeather(`${latitude},${longitude}`);
+            },
+            (error) => {
+                console.log("Location denied:", error);
+                fetchWeather("Delhi"); // fallback city
+            }
+        );
     }, []);
+
+
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -82,7 +110,14 @@ const App = () => {
                 {current && (
                     <div
                         className={`flex flex-col transition-all duration-700 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
-                        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} weatherData={current} unit={unit} toggleUnit={toggleUnit} />
+                        <Header
+                            weatherData={current}
+                            unit={unit}
+                            toggleUnit={toggleUnit}
+                            isDarkMode={isDarkMode}
+                            toggleDarkMode={toggleDarkMode}
+                            onSearch={fetchWeather}   // 🔥 IMPORTANT
+                        />
 
                         <div className="grid grid-cols-12  gap-8 mt-8">
                             <div className="lg:col-span-8 flex flex-col gap-8">
@@ -107,7 +142,7 @@ const App = () => {
                             </p>
                             <p>{error}</p>
                             <button
-                                // onClick={() => loadWeather()}
+                                onClick={() => loadWeather()}
                                 className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-lg shadow-red-200 dark:shadow-none"
                             >
                                 Retry

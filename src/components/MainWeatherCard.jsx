@@ -66,7 +66,7 @@ export const MainWeatherCard = ({weatherData, unit}) => {
                 <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
                         <div className="flex items-baseline"><span
-                            className="text-9xl font-bold tracking-tighter leading-none">{unit === "C" ? weatherData.temperature : weatherData.temp_f}</span>
+                            className="text-9xl font-bold tracking-tighter leading-none">{unit === "C" ? Math.round(weatherData.temperature) : Math.round(weatherData.temp_f)}</span>
                             <span className="text-5xl font-light ml-2">°{unit}</span>
                         </div>
                         <h2 className="text-4xl font-semibold mt-4">{weatherData.condition}</h2>

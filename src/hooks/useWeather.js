@@ -8,18 +8,15 @@ export const useWeather = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchWeatherByCity = async (city) => {
-        if (!city) return;
-
+    const fetchWeather = async (lat, lon) => {
         setLoading(true);
         setError(null);
-        const data = await getCurrentWeather(city);
-
-
 
         try {
-            const data = await getCurrentWeather(city);
+            // 🔥 Single API call only
+            const data = await getCurrentWeather({ lat, lon });
 
+            // ✅ CURRENT WEATHER
             setCurrent({
                 location: data.location.name,
                 country: data.location.country,
@@ -44,11 +41,12 @@ export const useWeather = () => {
                 aqi: data.current.air_quality["us-epa-index"],
             });
 
+            // ✅ FORECAST
             setForecast(
                 data.forecast.forecastday.map(day => ({
                     date: day.date,
                     day: new Date(day.date).toLocaleDateString("en-US", {
-                        weekday: "short", // Mon, Tue
+                        weekday: "short",
                     }),
                     max_c: Math.round(day.day.maxtemp_c),
                     max_f: Math.round(day.day.maxtemp_f),
@@ -58,11 +56,13 @@ export const useWeather = () => {
                     icon: day.day.condition.icon,
                 }))
             );
-            // ⏰ HOURLY DATA (FOR CHART)
+
+            // ✅ HOURLY DATA
             setHourlyData(
                 data.forecast.forecastday[0].hour.map(h => ({
-                    time: h.time.split(" ")[1], // "14:00"
-                    temp: h.temp_c,
+                    time: h.time.split(" ")[1],
+                    temp_c: h.temp_c,
+                    temp_f: h.temp_f,
                 }))
             );
 
@@ -75,5 +75,5 @@ export const useWeather = () => {
         }
     };
 
-    return { current, forecast, hourlyData, loading, error, fetchWeatherByCity };
+    return { current, forecast, hourlyData, loading, error, fetchWeather };
 };
