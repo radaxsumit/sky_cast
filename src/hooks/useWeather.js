@@ -25,7 +25,8 @@ export const useWeather = () => {
                 country: data.location.country,
                 temperature: data.current.temp_c,
                 temp_f: data.current.temp_f,
-                feelsLike: data.current.feelslike_c,
+                feelsLike_c: data.current.feelslike_c,
+                feelsLike_f: data.current.feelslike_f,
                 condition: data.current.condition.text,
                 icon: data.current.condition.icon,
 
@@ -49,8 +50,10 @@ export const useWeather = () => {
                     day: new Date(day.date).toLocaleDateString("en-US", {
                         weekday: "short", // Mon, Tue
                     }),
-                    minTemp: Math.round(day.day.mintemp_c),
-                    maxTemp: Math.round(day.day.maxtemp_c),
+                    max_c: Math.round(day.day.maxtemp_c),
+                    max_f: Math.round(day.day.maxtemp_f),
+                    min_c: Math.round(day.day.mintemp_c),
+                    min_f: Math.round(day.day.mintemp_f),
                     condition: day.day.condition.text,
                     icon: day.day.condition.icon,
                 }))

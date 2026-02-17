@@ -37,7 +37,7 @@ const Header = ({isDarkMode, toggleDarkMode, weatherData, unit, toggleUnit}) => 
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${unit === 'C' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}>°C</button>
                         <button
                             onClick={toggleUnit}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${unit === 'C' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}>°F</button>
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${unit === 'F' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'}`}>°F</button>
                     </div>
 
                     <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"/>

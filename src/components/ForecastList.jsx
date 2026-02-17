@@ -1,7 +1,7 @@
 import React from 'react'
 import { Sun, Cloud, CloudRain, CloudLightning, CloudDrizzle } from 'lucide-react';
 
-const ForecastItem = ({ day, isCurrent }) => {
+const ForecastItem = ({ day, isCurrent, unit }) => {
     const getIcon = () => {
         const cond = day.condition.toLowerCase();
 
@@ -43,17 +43,19 @@ const ForecastItem = ({ day, isCurrent }) => {
 
             {/* RIGHT */}
             <div className="flex gap-4">
-                <span className="font-bold text-slate-800 dark:text-white">{day.minTemp}°</span>
-                <span className="text-slate-300 dark:text-slate-600 font-medium">{day.maxTemp}°</span>
+                <span className="font-bold text-slate-800 dark:text-white">{unit === "C" ? day.min_c : day.min_f}°</span>
+                <span className="text-slate-300 dark:text-slate-600 font-medium">{unit === "C" ? day.max_c : day.max_f}°</span>
             </div>
         </div>
     );
 };
 
-export const ForecastList = ({forecast}) => {
+export const ForecastList = ({ forecast, unit }) => {
+    console.log("UNIT:", unit);
+
     return (
         <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 h-full shadow-sm shadow-slate-200/50 dark:shadow-none dark:border dark:border-slate-800 flex flex-col transition-colors">
-            <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-8">7-Day Forecast</h3>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-8">3 Day Forecast</h3>
 
             <div className="flex-1 flex flex-col gap-8">
                 {forecast.map((day, idx) => (
@@ -61,7 +63,7 @@ export const ForecastList = ({forecast}) => {
                         key={idx}
                         day={day}
                         isCurrent={idx === 0}
-                        // convertTemp={convertTemp}
+                        unit={unit}
                     />
                 ))}
             </div>

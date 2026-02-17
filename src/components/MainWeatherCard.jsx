@@ -14,10 +14,16 @@ const Stat = ({icon, label, value}) => (<div className="flex flex-col items-cent
 
 const Divider = () => (<div className="h-8 w-[2px] bg-white/20"></div>);
 
-export const MainWeatherCard = ({weatherData, unit, convertTemp}) => {
+export const MainWeatherCard = ({weatherData, unit}) => {
     const {condition, isDay} = weatherData;
 
     if (!weatherData) return null;
+    const temp =
+        unit === "C" ? weatherData.temp_c : weatherData.temp_f;
+
+    const feelsLike =
+        unit === "C" ? weatherData.feelslike_c : weatherData.feelslike_f;
+
 
     const {
         temperature,
@@ -28,6 +34,7 @@ export const MainWeatherCard = ({weatherData, unit, convertTemp}) => {
         icon,
         airQuality,
         isday,
+        temp_f,
     } = weatherData;
 
     const WeatherIcon = getWeatherIcon(condition, isday === 1);
@@ -59,12 +66,12 @@ export const MainWeatherCard = ({weatherData, unit, convertTemp}) => {
                 <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
                         <div className="flex items-baseline"><span
-                            className="text-9xl font-bold tracking-tighter leading-none">{Math.round(weatherData.temperature)}</span>
+                            className="text-9xl font-bold tracking-tighter leading-none">{unit === "C" ? weatherData.temperature : weatherData.temp_f}</span>
                             <span className="text-5xl font-light ml-2">°{unit}</span>
                         </div>
-                        <h2 className="text-4xl font-semibold mt-4">{convertTemp(weatherData.condition)}</h2>
+                        <h2 className="text-4xl font-semibold mt-4">{weatherData.condition}</h2>
                         <p className="text-white/70 mt-2 font-medium"> Feels
-                            like {Math.round(weatherData.temperature)}°</p>
+                            like {unit === "C" ? weatherData.feelsLike_c : weatherData.feelsLike_f}°</p>
                     </div>
 
                     <div className="drop-shadow-2xl">

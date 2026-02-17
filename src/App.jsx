@@ -37,15 +37,19 @@ const App = () => {
 
     const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
-    const [unit, setUnit] = useState("F"); // "F" | "C"
+    const [unit, setUnit] = useState("C"); // "F" | "C"
 
     const toggleUnit = () => {
-        setUnit((prev) => (prev === "F" ? "C" : "F"));
+        setUnit(prev => (prev === "C" ? "F" : "C"));
     };
+
 
     const convertTemp = (temp) => {
         if (unit === "C") {
             return Math.round(((temp - 32) * 5) / 9);
+        }
+        else if (unit === "F") {
+            return Math.round(((temp * 9/5) + 32));
         }
         return temp;
     }
@@ -82,13 +86,13 @@ const App = () => {
 
                         <div className="grid grid-cols-12  gap-8 mt-8">
                             <div className="lg:col-span-8 flex flex-col gap-8">
-                                <MainWeatherCard weatherData={current} forecast={forecast} unit={unit} convertTemp={convertTemp} />
+                                <MainWeatherCard weatherData={current} forecast={forecast} unit={unit} />
                                 <TempChart weatherData={current} isDarkMode={isDarkMode} hourlyData={hourlyData} converTemp={convertTemp} unit={unit}/>
-                                <WeatherStatsGrid weatherData={current} isDarkMode={isDarkMode}/>
+                                <WeatherStatsGrid weatherData={current} isDarkMode={isDarkMode} unit={unit}/>
                             </div>
 
                             <div className="lg:col-span-4 h-full">
-                                <ForecastList forecast={forecast}/>
+                                <ForecastList forecast={forecast} unit={unit} />
                             </div>
                         </div>
                     </div>
