@@ -29,23 +29,44 @@ export const fetchSuggestions = async (query) => {
     }
 };
 
+/* --------------------------
+   📍 GET USER LOCATION WEATHER
+-------------------------- */
+export const getUserLocationWeather = (fetchWeather) => {
+    if (!("geolocation" in navigator)) {
+        console.log("Geolocation not supported, fallback to Jaipur");
+        fetchWeather("Jaipur");
+        return;
+    }
 
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const { latitude, longitude } = position.coords;
+
+            fetchWeather({
+                lat: latitude,
+                lon: longitude
+            });
+        },
+        () => {
+            console.log("Location denied, fallback to Jaipur");
+            fetchWeather("Jaipur");
+        }
+    );
+};
 
 /* --------------------------
    🌦 FETCH WEATHER
 -------------------------- */
 export const getCurrentWeather = async (location) => {
 
-    let query;
-
-    if (typeof location === "string") {
-        query = location;
-    } else {
-        query = `${location.lat},${location.lon}`;
-    }
+    const query =
+        typeof location === "object"
+            ? `${location.lat},${location.lon}`
+            : location;
 
     const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?q=${query}&days=3&aqi=yes&key=${import.meta.env.VITE_API_KEY}`
+        `https://api.weatherapi.com/v1/forecast.json?q=${query}&days=3&aqi=yes&key=${API_KEY}`
     );
 
     if (!response.ok) {

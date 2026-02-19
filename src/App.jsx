@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import { motion, AnimatePresence } from "framer-motion";
 import {SideNav} from "./components/SideNav.jsx";
 import {Loader2} from 'lucide-react';
 import Header from "./components/Header.jsx";
@@ -7,42 +8,15 @@ import {TempChart} from "./components/TempChart.jsx";
 import {WeatherStatsGrid} from "./components/WeatherStatsGrid.jsx"
 import {ForecastList} from "./components/ForecastList.jsx";
 import {useWeather} from "./hooks/useWeather";
-
+import { getUserLocationWeather } from "./services/weatherApi.js";
 
 const App = () => {
 
     const { current, forecast, hourlyData, loading, error, fetchWeather } = useWeather();
 
     useEffect(() => {
-        if (!navigator.geolocation) {
-            console.log("Geolocation not supported");
-            fetchWeather("Delhi"); // fallback
-            return;
-        }
-
-        // Optional: Check permission state
-        if (navigator.permissions) {
-            navigator.permissions.query({ name: "geolocation" }).then((result) => {
-                if (result.state === "prompt") {
-                    alert("Allow location access to see weather of your area 🌍");
-                }
-            });
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-
-                // 🔥 Call your weather hook using lat & lon
-                fetchWeather(`${latitude},${longitude}`);
-            },
-            (error) => {
-                console.log("Location denied:", error);
-                fetchWeather("Delhi"); // fallback city
-            }
-        );
+        getUserLocationWeather(fetchWeather);
     }, []);
-
 
 
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -72,15 +46,10 @@ const App = () => {
     };
 
 
-    const convertTemp = (temp) => {
-        if (unit === "C") {
-            return Math.round(((temp - 32) * 5) / 9);
-        }
-        else if (unit === "F") {
-            return Math.round(((temp * 9/5) + 32));
-        }
-        return temp;
-    }
+    const convertTemp = (tempC, tempF) => {
+        return unit === "C" ? tempC : tempF;
+    };
+
 
     if (loading) {
         return (
@@ -94,64 +63,133 @@ const App = () => {
         );
     }
     return (
-        <div
-            className="flex min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
-            <SideNav isDarkMode={isDarkMode}/>
+        <div className="flex min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-500">
 
-            <main className="flex-1 flex flex-col p-4 md:p-8 lg:p-10 ml-0 md:ml-20 overflow-x-hidden relative ">
-                {/* Top loading bar */}
+            <SideNav isDarkMode={isDarkMode} />
+
+            <main className="flex-1 flex flex-col px-4 sm:px-6 md:px-10 lg:px-14 py-6 ml-0 md:ml-20 overflow-x-hidden relative">
+
+                {/* Animated Loading Bar */}
                 {loading && current && (
-                    <div className="absolute top-0 left-0 right-0 h-1 z-[60] overflow-hidden">
-                        <div
-                            className="h-full bg-indigo-500 animate-[shimmer_1.5s_infinite] w-1/3 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-                    </div>
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.2 }}
+                        className="absolute top-0 left-0 h-1 bg-indigo-500 z-50"
+                    />
                 )}
 
-                {current && (
-                    <div
-                        className={`flex flex-col transition-all duration-700 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
-                        <Header
-                            weatherData={current}
-                            unit={unit}
-                            toggleUnit={toggleUnit}
-                            isDarkMode={isDarkMode}
-                            toggleDarkMode={toggleDarkMode}
-                            onSearch={fetchWeather}   // 🔥 IMPORTANT
-                        />
+                <AnimatePresence mode="wait">
 
-                        <div className="grid grid-cols-12  gap-8 mt-8">
-                            <div className="lg:col-span-8 flex flex-col gap-8">
-                                <MainWeatherCard weatherData={current} forecast={forecast} unit={unit} />
-                                <TempChart weatherData={current} isDarkMode={isDarkMode} hourlyData={hourlyData} converTemp={convertTemp} unit={unit}/>
-                                <WeatherStatsGrid weatherData={current} isDarkMode={isDarkMode} unit={unit}/>
+                    {current && (
+                        <motion.div
+                            key={current.location}
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="flex flex-col gap-8"
+                        >
+                            <Header
+                                weatherData={current}
+                                unit={unit}
+                                toggleUnit={toggleUnit}
+                                isDarkMode={isDarkMode}
+                                toggleDarkMode={toggleDarkMode}
+                                onSearch={fetchWeather}
+                            />
+
+                            {/* Responsive Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+
+                                {/* LEFT SIDE */}
+                                <div className="lg:col-span-8 flex flex-col gap-6">
+
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.98 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.1 }}
+                                    >
+                                        <MainWeatherCard
+                                            weatherData={current}
+                                            forecast={forecast}
+                                            unit={unit}
+                                        />
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 }}
+                                    >
+                                        <TempChart
+                                            weatherData={current}
+                                            isDarkMode={isDarkMode}
+                                            hourlyData={hourlyData}
+                                            converTemp={convertTemp}
+                                            unit={unit}
+                                        />
+                                    </motion.div>
+
+                                </div>
+
+                                {/* RIGHT SIDE */}
+                                <div className="lg:col-span-4 flex flex-col gap-6">
+
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.3 }}
+                                    >
+                                        <ForecastList forecast={forecast} unit={unit} />
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.4 }}
+                                    >
+                                        <WeatherStatsGrid
+                                            weatherData={current}
+                                            isDarkMode={isDarkMode}
+                                            unit={unit}
+                                        />
+                                    </motion.div>
+
+                                </div>
                             </div>
 
-                            <div className="lg:col-span-4 h-full">
-                                <ForecastList forecast={forecast} unit={unit} />
-                            </div>
-                        </div>
-                    </div>
-                )}
+                        </motion.div>
+                    )}
 
+                </AnimatePresence>
+
+                {/* Error Section */}
                 {error && !current && (
                     <div className="flex-1 flex items-center justify-center">
-                        <div
-                            className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30 text-red-600 p-6 rounded-2xl border max-w-md text-center">
-                            <p className="font-semibold text-lg mb-2 text-red-700 dark:text-red-400">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30 text-red-600 p-8 rounded-3xl border max-w-md text-center shadow-xl"
+                        >
+                            <p className="font-semibold text-xl mb-3 text-red-700 dark:text-red-400">
                                 Connection Error
                             </p>
-                            <p>{error}</p>
+                            <p className="text-sm opacity-80">{error}</p>
+
                             <button
-                                onClick={() => loadWeather()}
-                                className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-lg shadow-red-200 dark:shadow-none"
+                                onClick={() => fetchWeather("Jaipur")}
+                                className="mt-6 px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all shadow-lg"
                             >
                                 Retry
                             </button>
-                        </div>
+                        </motion.div>
                     </div>
                 )}
+
             </main>
         </div>
-    )
+    );
+
 }
 export default App

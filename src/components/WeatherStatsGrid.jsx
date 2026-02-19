@@ -1,14 +1,56 @@
 import React from "react";
-import { Wind, Sun, Sunrise, Sunset, Activity } from "lucide-react";
+import { motion } from "framer-motion";
+import { Wind, Sun, Sunrise, Activity } from "lucide-react";
 
-const StatCard = ({ icon, label, value, badge, badgeColor, subtext }) => (
-    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm shadow-slate-200/50 dark:shadow-none dark:border dark:border-slate-800 flex flex-col justify-between transition-colors">
-        <div className="flex items-center justify-between mb-6">
+/* -------------------------
+   AQI Helper
+-------------------------- */
+
+const getAqiStatus = (aqi) => {
+    if (aqi <= 2) return { label: "Good", color: "green" };
+    if (aqi <= 4) return { label: "Moderate", color: "yellow" };
+    return { label: "Poor", color: "red" };
+};
+
+const StatCard = ({
+                      icon,
+                      label,
+                      value,
+                      badge,
+                      badgeColor,
+                      subtext,
+                      index,
+                  }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.1, duration: 0.4 }}
+        whileHover={{
+            y: -8,
+            boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
+        }}
+        className="relative
+      bg-white dark:bg-slate-900
+      p-6 sm:p-7
+      rounded-[1.75rem]
+      border border-slate-100 dark:border-slate-800
+      flex flex-col justify-between
+      transition-all duration-300
+      overflow-hidden"
+    >
+        {/* Soft background glow */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl" />
+
+        <div className="flex items-center justify-between mb-4 relative z-10">
             <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 transition-colors">
-                    {React.cloneElement(icon, { className: "w-5 h-5" })}
+                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 shadow-inner">
+                    {React.cloneElement(icon, {
+                        className:
+                            "w-5 h-5 text-indigo-500 drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]",
+                    })}
                 </div>
-                <span className="font-semibold text-slate-400 dark:text-slate-500 text-sm uppercase tracking-wide">
+
+                <span className="font-semibold text-slate-400 dark:text-slate-500 text-xs sm:text-sm uppercase tracking-wide">
           {label}
         </span>
             </div>
@@ -22,61 +64,76 @@ const StatCard = ({ icon, label, value, badge, badgeColor, subtext }) => (
             )}
         </div>
 
-        <div>
-            <div className="text-3xl font-bold text-slate-800 dark:text-white">
+        <div className="relative z-10">
+            <div className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
                 {value}
             </div>
+
             {subtext && (
-                <p className="text-slate-400 dark:text-slate-500 text-sm font-medium mt-1">
+                <p className="text-slate-400 dark:text-slate-500 text-xs sm:text-sm font-medium mt-1">
                     {subtext}
                 </p>
             )}
         </div>
-    </div>
+    </motion.div>
 );
 
+export const WeatherStatsGrid = ({ weatherData }) => {
+    if (!weatherData) return null;
 
-export const WeatherStatsGrid = ({ weatherData , isDarkMode }) => {
+    const { condition, windSpeed, sunrise, sunset, aqi } = weatherData;
 
-    const {
-        temperature, humidity, windSpeed, pressure, visibility, location, icon, airQuality,condition,
-    } = weatherData;
+    const aqiData = getAqiStatus(aqi);
 
+    const badgeStyles = {
+        green:
+            "bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-400",
+        yellow:
+            "bg-yellow-100 dark:bg-yellow-950/40 text-yellow-600 dark:text-yellow-400",
+        red:
+            "bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400",
+    };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-6"
+        >
             <StatCard
                 icon={<Activity />}
                 label="Air Quality"
-                value={weatherData.visibility}
-                badge="Good"
-                badgeColor="bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-400"
+                value={aqi}
+                badge={aqiData.label}
+                badgeColor={badgeStyles[aqiData.color]}
+                subtext="US EPA Index"
+                index={0}
             />
 
             <StatCard
                 icon={<Sun />}
-                label="Sun & UV"
-                value={weatherData.condition}
-                subtext="Low UV risk"
+                label="Condition"
+                value={condition}
+                subtext="Live atmospheric data"
+                index={1}
             />
 
             <StatCard
                 icon={<Wind />}
                 label="Wind Speed"
-                value={weatherData.windSpeed}
-                subtext="From North East"
+                value={`${windSpeed} km/h`}
+                subtext="Current wind flow"
+                index={2}
             />
 
             <StatCard
                 icon={<Sunrise />}
                 label="Sunrise & Sunset"
-                value={weatherData.sunrise}
-                subtext={`Sunset: ${weatherData.sunset}`}
+                value={sunrise}
+                subtext={`Sunset: ${sunset}`}
+                index={3}
             />
-
-        </div>
+        </motion.div>
     );
 };
-
-
-

@@ -1,6 +1,7 @@
 import {Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 export const TempChart = ({ hourlyData = [], converTemp, unit}) => {
+
     if (!hourlyData.length) {
         return (
             <div className="bg-white rounded-3xl p-8 text-center text-slate-400">
@@ -10,9 +11,13 @@ export const TempChart = ({ hourlyData = [], converTemp, unit}) => {
     }
 
     const convertedData = hourlyData.map(item => ({
-        ...item,
-        temp: converTemp(item.temp),
+        time: item.time,
+        temp:
+            unit === "C"
+                ? item.temp_c
+                : item.temp_f
     }));
+
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm shadow-slate-200/50 dark:shadow-none dark:border dark:border-slate-800 transition-colors">
@@ -68,18 +73,19 @@ export const TempChart = ({ hourlyData = [], converTemp, unit}) => {
                             dataKey="temp"
                             stroke="#6366f1"
                             strokeWidth={3}
-                            fill="url(#colorTemp)"
+                            fill="url(#tempGradient)"
                             dot={{
-                                r: 4,
+                                r: 3,
                                 fill: "#6366f1",
                                 stroke: "transparent"
                             }}
                             activeDot={{
-                                r: 6,
+                                r: 5,
                                 fill: "#6366f1",
                                 stroke: "transparent"
                             }}
                         />
+
 
                     </AreaChart>
                 </ResponsiveContainer>

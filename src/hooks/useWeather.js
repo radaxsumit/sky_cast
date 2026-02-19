@@ -8,13 +8,12 @@ export const useWeather = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchWeather = async (lat, lon) => {
+    const fetchWeather = async (location) => {
         setLoading(true);
         setError(null);
 
         try {
-            // 🔥 Single API call only
-            const data = await getCurrentWeather({ lat, lon });
+            const data = await getCurrentWeather(location);
 
             // ✅ CURRENT WEATHER
             setCurrent({

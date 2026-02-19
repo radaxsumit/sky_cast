@@ -1,6 +1,7 @@
-import {React, useState, useEffect} from "react";
-import { Search, MapPin, Moon, Sun, LocateFixed  } from "lucide-react";
-import {fetchSuggestions} from "../services/weatherApi.js";
+import React, { useState, useEffect } from "react";
+import { Search, MapPin, Moon, Sun, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { fetchSuggestions } from "../services/weatherApi.js";
 
 const Header = ({
                     isDarkMode,
@@ -12,17 +13,15 @@ const Header = ({
                 }) => {
 
     const { location, date } = weatherData;
-    const [searchValue, setSearchValue] = useState("")
+
+    const [searchValue, setSearchValue] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const handleSelect = (suggestion) => {
-        onSearch({ lat: suggestion.lat, lon: suggestion.lon });
-        setSearchValue("");
-        setShowSuggestions(false);
-    };
-
+    /* -----------------------------
+       🔍 SEARCH SUGGESTIONS
+    ------------------------------ */
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (searchValue.length >= 3) {
@@ -35,32 +34,40 @@ const Header = ({
                 setSuggestions([]);
                 setShowSuggestions(false);
             }
-        }, 500);
+        }, 400);
 
         return () => clearTimeout(timer);
     }, [searchValue]);
 
-
-
+    const handleSelect = (suggestion) => {
+        onSearch({ lat: suggestion.lat, lon: suggestion.lon });
+        setSearchValue("");
+        setShowSuggestions(false);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!searchValue.trim()) return;
-
         onSearch(searchValue);
         setSearchValue("");
+        setShowSuggestions(false);
     };
 
     return (
-        <header className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+        >
 
-            {/* LEFT */}
-            <div className="flex-shrink-0">
-                <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
+            {/* LEFT SIDE */}
+            <div className="flex flex-col">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-800 dark:text-white">
                     WeatherDashboard
                 </h1>
 
-                <div className="flex gap-2 mt-1 items-center text-slate-400">
+                <div className="flex items-center gap-2 mt-1 text-slate-500 dark:text-slate-400">
                     <MapPin className="w-4 h-4 text-indigo-500" />
                     <span className="text-sm font-medium">
                         {location} • {date}
@@ -68,25 +75,11 @@ const Header = ({
                 </div>
             </div>
 
-            {/* RIGHT */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            {/* RIGHT SIDE */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
 
-                {/* SEARCH */}
-                <div className="relative w-full sm:w-64 md:w-80">
-                    {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute w-full mt-15 bg-slate-900 rounded-xl shadow-xl z-50">
-                            {suggestions.map((item, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => handleSelect(item)}
-                                    className="px-4 py-3 hover:bg-slate-800 cursor-pointer"
-                                >
-                                    <p className="font-semibold">{item.name}</p>
-                                    <p className="text-xs text-slate-400">{item.display}</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                {/* SEARCH BAR */}
+                <div className="relative w-full sm:w-72 lg:w-80">
 
                     <form onSubmit={handleSubmit}>
                         <input
@@ -94,33 +87,54 @@ const Header = ({
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                             placeholder="Search city..."
-                            className="w-full pl-12 pr-10 py-3.5 bg-white text-slate-700 dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/40 placeholder-slate-400 dark:placeholder-slate-600 transition-all outline-none"
+                            className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white/90 dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
                         />
-                        <button
-                            onClick={() => {
-                                navigator.geolocation.getCurrentPosition((pos) => {
-                                    onSearch({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-                                });
-                            }}
-                            className="text-sm text-indigo-500 hover:underline"
-                        >
-                            <LocateFixed className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6"/>
-                        </button>
 
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-600" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
 
+                        {isSearching && (
+                            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-500 animate-spin" />
+                        )}
                     </form>
+
+                    {/* Suggestions Dropdown */}
+                    <AnimatePresence>
+                        {showSuggestions && suggestions.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.25 }}
+                                className="absolute top-full left-0 w-full mt-3 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-50 overflow-hidden"
+                            >
+                                {suggestions.map((item, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleSelect(item)}
+                                        className="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800 last:border-0"
+                                    >
+                                        <p className="font-semibold text-slate-800 dark:text-white text-sm">
+                                            {item.name}
+                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                                            {item.display}
+                                        </p>
+                                    </button>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                 </div>
 
-                {/* UNIT + THEME */}
-                <div className="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                {/* UNIT + THEME CONTROLS */}
+                <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
 
                     {/* UNIT TOGGLE */}
-                    <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800">
+                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
                         <button
                             onClick={toggleUnit}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                                 unit === "C"
                                     ? "bg-white dark:bg-slate-700 text-indigo-600 shadow-sm"
                                     : "text-slate-400"
@@ -131,7 +145,7 @@ const Header = ({
 
                         <button
                             onClick={toggleUnit}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                                 unit === "F"
                                     ? "bg-white dark:bg-slate-700 text-indigo-600 shadow-sm"
                                     : "text-slate-400"
@@ -146,7 +160,7 @@ const Header = ({
                     {/* DARK MODE */}
                     <button
                         onClick={toggleDarkMode}
-                        className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400"
+                        className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all"
                     >
                         {isDarkMode ? (
                             <Sun className="w-5 h-5" />
@@ -154,10 +168,11 @@ const Header = ({
                             <Moon className="w-5 h-5" />
                         )}
                     </button>
+
                 </div>
 
             </div>
-        </header>
+        </motion.header>
     );
 };
 
