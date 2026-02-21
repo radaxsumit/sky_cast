@@ -4,8 +4,9 @@
 
 **SkyCast** is a modern, responsive, and visually rich weather forecast web application built using **React + Vite**. It provides real-time weather data, beautiful UI animations, and an intuitive user experience designed for speed and clarity.
 
-🔗 **Live Demo:** [https://your-vercel-link.vercel.app]([https://your-vercel-link.vercel.app](https://sky-cast-topaz.vercel.app/))
-📂 **GitHub Repo:** [https://github.com/yourusername/sky-cast]([https://github.com/yourusername/sky-cast](https://github.com/radaxsumit/sky_cast))
+🔗 **Live Demo:** [SkyCast Weather App](https://sky-cast-topaz.vercel.app/)
+
+📂 **GitHub Repo:** [View Source Code](https://github.com/radaxsumit/sky_cast)
 
 ---
 
@@ -26,15 +27,15 @@
 
 ## Main Dashboard
 
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./src/screenshots/dashboardD.png)
 
 ## Weather Details
 
-![Weather Details](./screenshots/details.png)
+![Weather Details](./src/screenshots/details.png)
 
 ## Mobile View
 
-![Mobile View](./screenshots/mobile.png)
+![Mobile View](./src/screenshots/mobile.jpg)
 
 ---
 
@@ -141,8 +142,8 @@ Steps:
 
 **Summit Prajapati**
 
-* GitHub: [https://github.com/yourusername](https://github.com/radaxsumit)
-* LinkedIn: [https://linkedin.com/in/yourprofile]([https://linkedin.com/in/yourprofile](https://www.linkedin.com/in/sumit-prajapati03/))
+- GitHub: [radaxsumit](https://github.com/radaxsumit)
+- LinkedIn: [Sumit Prajapati](https://www.linkedin.com/in/sumit-prajapati03/)
 
 ---
 
