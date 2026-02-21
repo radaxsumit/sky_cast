@@ -1,16 +1,170 @@
-# React + Vite
+# 🌤️ SkyCast Modern Weather Forecast Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![SkyCast Banner](./screenshots/banner.png)
 
-Currently, two official plugins are available:
+**SkyCast** is a modern, responsive, and visually rich weather forecast web application built using **React + Vite**. It provides real-time weather data, beautiful UI animations, and an intuitive user experience designed for speed and clarity.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 **Live Demo:** [https://your-vercel-link.vercel.app]([https://your-vercel-link.vercel.app](https://sky-cast-topaz.vercel.app/))
+📂 **GitHub Repo:** [https://github.com/yourusername/sky-cast]([https://github.com/yourusername/sky-cast](https://github.com/radaxsumit/sky_cast))
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# ✨ Features
 
-## Expanding the ESLint configuration
+* 🌎 Real-time weather data
+* 📍 Location-based weather detection
+* 🎨 Beautiful modern UI with smooth animations
+* ⚡ Fast performance with Vite
+* 📱 Fully responsive (mobile, tablet, desktop)
+* 🌤️ Dynamic weather visuals based on conditions
+* 📊 Weather stats like temperature, humidity, wind speed
+* 🌙 Clean and minimal design
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+# 🖼️ Screenshots
+
+## Main Dashboard
+
+![Dashboard](./screenshots/dashboard.png)
+
+## Weather Details
+
+![Weather Details](./screenshots/details.png)
+
+## Mobile View
+
+![Mobile View](./screenshots/mobile.png)
+
+---
+
+# 🚀 Tech Stack
+
+**Frontend**
+
+* React.js
+* Vite
+* JavaScript (ES6+)
+* CSS / Tailwind / Custom Styling
+
+**API**
+
+* OpenWeather API (or your weather API)
+
+**Deployment**
+
+* Vercel
+
+---
+
+# 📦 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/sky-cast.git
+cd sky-cast
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file in root directory:
+
+```env
+VITE_WEATHER_API_KEY=your_api_key_here
+```
+
+---
+
+# 📁 Project Structure
+
+```
+sky-cast/
+│
+├── public/
+├── src/
+│   ├── components/
+│   ├── assets/
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── screenshots/
+├── package.json
+└── README.md
+```
+
+---
+
+# 🌐 Deployment
+
+Deployed using **Vercel**
+
+Steps:
+
+1. Push code to GitHub
+2. Connect repo to Vercel
+3. Add environment variables
+4. Deploy
+
+---
+
+# 🎯 Performance Highlights
+
+* ⚡ Fast load time
+* 📦 Optimized bundle
+* 🎨 Smooth animations
+* 📱 Fully responsive
+
+---
+
+# 👨‍💻 Author
+
+**Summit Prajapati**
+
+* GitHub: [https://github.com/yourusername](https://github.com/radaxsumit)
+* LinkedIn: [https://linkedin.com/in/yourprofile]([https://linkedin.com/in/yourprofile](https://www.linkedin.com/in/sumit-prajapati03/))
+
+---
+
+# ⭐ Support
+
+If you like this project, please give it a ⭐ on GitHub!
+
+---
+
+# 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+# 🔮 Future Improvements
+
+* 7‑day forecast
+* Hourly forecast
+* Multiple city tracking
+* Weather maps integration
+
+---
+
+**SkyCast — Weather, beautifully visualized.**
