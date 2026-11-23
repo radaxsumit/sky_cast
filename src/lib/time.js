@@ -28,3 +28,14 @@ export function weekdayShort(date) {
 export function formatLocalTime(epochSec, tzId, opts = { hour: 'numeric', minute: '2-digit' }) {
   return new Intl.DateTimeFormat('en-US', { timeZone: tzId, ...opts }).format(new Date(epochSec * 1000));
 }
+
+export function minutesInZone(date, tzId) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: tzId,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+  const get = (type) => Number(parts.find((p) => p.type === type).value);
+  return get('hour') * 60 + get('minute');
+}

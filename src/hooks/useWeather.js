@@ -1,78 +1,75 @@
-import { getCurrentWeather } from "../services/weatherApi.js";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { createLatest } from '../lib/latest.js';
+import { locationQuery } from '../lib/locationQuery.js';
+import { fetchForecast } from '../services/weatherApi.js';
 
-export const useWeather = () => {
-    const [current, setCurrent] = useState(null);
-    const [forecast, setForecast] = useState([]);
-    const [hourlyData, setHourlyData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+export const FALLBACK_CITY = 'Mumbai';
 
-    const fetchWeather = async (location) => {
-        setLoading(true);
-        setError(null);
+/**
+ * status: 'idle' → 'initial' (first load) → 'ready'; later loads go 'refreshing' → 'ready'.
+ * On error the last good `data` stays on screen and `error` holds a message; status is 'error' only with no data.
+ */
+export function useWeather() {
+  const [data, setData] = useState(null);
+  const [status, setStatus] = useState('idle');
+  const [error, setError] = useState(null);
+  const [latest] = useState(createLatest);
+  const hasData = useRef(false);
 
-        try {
-            const data = await getCurrentWeather(location);
+  const load = useCallback(async (query) => {
+    const q = typeof query === 'string' ? query.trim() : locationQuery(query);
+    if (!q) return;
+    const token = latest.next();
+    setStatus(hasData.current ? 'refreshing' : 'initial');
+    setError(null);
+    try {
+      const model = await fetchForecast(q);
+      if (!latest.isLatest(token)) return;
+      hasData.current = true;
+      setData(model);
+      setStatus('ready');
+    } catch (e) {
+      if (!latest.isLatest(token)) return;
+      setError(e instanceof Error ? e.message : 'Something went wrong');
+      setStatus(hasData.current ? 'ready' : 'error');
+    }
+  }, [latest]);
 
-            // ✅ CURRENT WEATHER
-            setCurrent({
-                location: data.location.name,
-                country: data.location.country,
-                temperature: data.current.temp_c,
-                temp_f: data.current.temp_f,
-                feelsLike_c: data.current.feelslike_c,
-                feelsLike_f: data.current.feelslike_f,
-                condition: data.current.condition.text,
-                icon: data.current.condition.icon,
+  const clearError = useCallback(() => setError(null), []);
 
-                humidity: data.current.humidity,
-                windSpeed: data.current.wind_kph,
-                pressure: data.current.pressure_mb,
-                visibility: data.current.vis_km,
+  return { data, status, error, load, clearError };
+}
 
-                sunrise: data.forecast.forecastday[0].astro.sunrise,
-                sunset: data.forecast.forecastday[0].astro.sunset,
+/**
+ * First load: a fixed default city from Settings wins; otherwise geolocation, falling back to FALLBACK_CITY.
+ * Guarded by a ref so React StrictMode's double effect doesn't ask for location twice.
+ */
+export function useInitialLocation(defaultCity, load) {
+  const started = useRef(false);
+  const [notice, setNotice] = useState(null);
 
-                localTime: data.location.localtime,
-                date: data.forecast.forecastday[0].date,
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
 
-                aqi: data.current.air_quality["us-epa-index"],
-            });
-
-            // ✅ FORECAST
-            setForecast(
-                data.forecast.forecastday.map(day => ({
-                    date: day.date,
-                    day: new Date(day.date).toLocaleDateString("en-US", {
-                        weekday: "short",
-                    }),
-                    max_c: Math.round(day.day.maxtemp_c),
-                    max_f: Math.round(day.day.maxtemp_f),
-                    min_c: Math.round(day.day.mintemp_c),
-                    min_f: Math.round(day.day.mintemp_f),
-                    condition: day.day.condition.text,
-                    icon: day.day.condition.icon,
-                }))
-            );
-
-            // ✅ HOURLY DATA
-            setHourlyData(
-                data.forecast.forecastday[0].hour.map(h => ({
-                    time: h.time.split(" ")[1],
-                    temp_c: h.temp_c,
-                    temp_f: h.temp_f,
-                }))
-            );
-
-        } catch (e) {
-            setError(
-                e instanceof Error ? e.message : "Something went wrong"
-            );
-        } finally {
-            setLoading(false);
-        }
+    if (defaultCity) {
+      load(defaultCity);
+      return;
+    }
+    const fallback = () => {
+      setNotice(`Location unavailable, showing ${FALLBACK_CITY}`);
+      load(FALLBACK_CITY);
     };
+    if (!('geolocation' in navigator)) {
+      fallback();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => load(`${coords.latitude.toFixed(4)},${coords.longitude.toFixed(4)}`),
+      fallback,
+      { timeout: 8000, maximumAge: 600_000 },
+    );
+  }, [defaultCity, load]);
 
-    return { current, forecast, hourlyData, loading, error, fetchWeather };
-};
+  return { notice, dismissNotice: () => setNotice(null) };
+}

@@ -36,3 +36,11 @@ test('unit conversion rounds', () => {
   expect(convertWind(7.6, 4.7, 'kph')).toBe(8);
   expect(convertWind(7.6, 4.7, 'mph')).toBe(5);
 });
+
+test('minutesInZone reads wall-clock minutes in a timezone', async () => {
+  const { minutesInZone } = await import('../../src/lib/time.js');
+  const d = new Date(Date.UTC(2026, 10, 23, 13, 0));
+  expect(minutesInZone(d, 'Asia/Kolkata')).toBe(18 * 60 + 30);
+  expect(minutesInZone(d, 'America/Los_Angeles')).toBe(5 * 60);
+  expect(minutesInZone(new Date(Date.UTC(2026, 10, 23, 18, 30)), 'Asia/Kolkata')).toBe(0);
+});
