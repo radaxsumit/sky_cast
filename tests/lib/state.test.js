@@ -61,3 +61,7 @@ test('findSaved matches by nearby coordinates', async () => {
   expect(findSaved(list, 19.08, 72.87)?.id).toBe(1);
   expect(findSaved(list, 18.5, 73.85)).toBeUndefined();
 });
+
+test('locationQuery falls back to the place name', () => {
+  expect(locationQuery({ name: 'Pune' })).toBe('Pune');
+});
