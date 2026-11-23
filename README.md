@@ -1,6 +1,6 @@
 # 🌤️ SkyCast Modern Weather Forecast Web App
 
-![SkyCast Banner](./screenshots/banner.png)
+![SkyCast Banner](./docs/screenshots/MainDashboard.png)
 
 **SkyCast** is a modern, responsive, and visually rich weather forecast web application built using **React + Vite**. It provides real-time weather data, beautiful UI animations, and an intuitive user experience designed for speed and clarity.
 
@@ -26,15 +26,15 @@
 
 ## Main Dashboard
 
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./docs/screenshots/dashboardL.png)
 
 ## Weather Details
 
-![Weather Details](./screenshots/details.png)
+![Weather Details](./docs/screenshots/details.png)
 
 ## Mobile View
 
-![Mobile View](./screenshots/mobile.png)
+![Mobile View](./docs/screenshots/mobile.jpg)
 
 ---
 

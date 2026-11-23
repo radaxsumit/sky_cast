@@ -1,23 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-glass="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/Icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sky</title>
-    <script>
-      (function () {
-        const theme = localStorage.getItem("theme");
-        if (
-                theme === "dark" ||
-                (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
-        ) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      })();
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1530" />
+    <title>SkyCast — Live Weather</title>
+    <meta
+      name="description"
+      content="SkyCast: a living-sky weather dashboard with hourly and 3-day forecasts, air quality and more."
+    />
   </head>
   <body>
     <div id="root"></div>
