@@ -10,5 +10,9 @@ export default defineConfig(({ mode }) => {
   return {
     base: '/',
     plugins: [react(), tailwindcss(), weatherProxy(env)],
+    build: {
+      // Keep the 120+ animated weather icons as separate files so only the ones on screen are downloaded.
+      assetsInlineLimit: (file) => (file.includes('weather-icons') ? false : undefined),
+    },
   };
 });

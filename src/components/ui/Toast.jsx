@@ -1,7 +1,15 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
+import { useEffect } from 'react';
 
+// Errors stay until dismissed; informational notices fade after 6 s.
 export function Toast({ message, tone = 'error', onDismiss }) {
+  useEffect(() => {
+    if (!message || tone === 'error') return undefined;
+    const id = setTimeout(onDismiss, 6000);
+    return () => clearTimeout(id);
+  }, [message, tone, onDismiss]);
+
   return (
     <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4" role="status" aria-live="polite">
       <AnimatePresence>

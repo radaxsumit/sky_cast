@@ -50,3 +50,14 @@ test('locationQuery', () => {
   expect(locationQuery('Pune')).toBe('Pune');
   expect(locationQuery('  Pune ')).toBe('Pune');
 });
+
+test('locationQuery uses coordinates when the id is not a WeatherAPI id', () => {
+  expect(locationQuery({ id: '19.07,72.88', lat: 19.07, lon: 72.88 })).toBe('19.07,72.88');
+});
+
+test('findSaved matches by nearby coordinates', async () => {
+  const { findSaved } = await import('../../src/lib/savedCities.js');
+  const list = [{ id: 1, name: 'Mumbai', lat: 19.07, lon: 72.88 }];
+  expect(findSaved(list, 19.08, 72.87)?.id).toBe(1);
+  expect(findSaved(list, 18.5, 73.85)).toBeUndefined();
+});

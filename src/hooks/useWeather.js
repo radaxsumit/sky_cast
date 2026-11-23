@@ -71,5 +71,6 @@ export function useInitialLocation(defaultCity, load) {
     );
   }, [defaultCity, load]);
 
-  return { notice, dismissNotice: () => setNotice(null) };
+  const dismissNotice = useCallback(() => setNotice(null), []);
+  return { notice, dismissNotice };
 }
