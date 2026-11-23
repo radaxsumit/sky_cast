@@ -3,17 +3,17 @@ import { Cloud, Droplet, Eye, Gauge, Sun, Thermometer, Wind } from 'lucide-react
 import { AQI_LEVELS, aqiInfo } from '../../lib/aqi.js';
 import { cloudLabel, feelsLikeNote, pressureLabel, uvLabel } from '../../lib/describe.js';
 import { convertTemp, convertWind } from '../../lib/units.js';
-import { CardTitle, GlassCard } from '../ui/GlassCard.jsx';
+import { CardTitle, Card } from '../ui/Card.jsx';
 import { MetIcon } from '../ui/WeatherIcon.jsx';
 
 function Tile({ title, icon, aside, children, className = '' }) {
   return (
-    <GlassCard className={`flex min-h-[168px] flex-col p-5 ${className}`}>
+    <Card className={`flex min-h-[168px] flex-col p-5 ${className}`}>
       <CardTitle icon={icon} aside={aside}>
         {title}
       </CardTitle>
       <div className="flex flex-1 flex-col justify-between">{children}</div>
-    </GlassCard>
+    </Card>
   );
 }
 
@@ -55,7 +55,7 @@ export function AqiTile({ aqi, className }) {
       aside={<span className="text-ink-muted text-xs">US EPA {info.level} of 6</span>}
     >
       <div className="flex items-end justify-between gap-4">
-        <Big>{info.label}</Big>
+        <p className="font-display text-[1.65rem] leading-tight font-semibold tracking-tight">{info.label}</p>
         {aqi.pm25 != null && (
           <p className="text-ink-muted text-right text-sm">
             <span className="text-ink tabular block text-lg font-semibold">{Math.round(aqi.pm25)}</span>

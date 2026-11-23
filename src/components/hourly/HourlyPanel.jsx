@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { scaleTemps, smoothPath } from '../../lib/chart.js';
 import { currentHourIndex } from '../../lib/time.js';
 import { convertTemp } from '../../lib/units.js';
-import { GlassCard } from '../ui/GlassCard.jsx';
+import { Card } from '../ui/Card.jsx';
 import { WeatherIcon } from '../ui/WeatherIcon.jsx';
 
 const CELL = 68;
@@ -17,10 +17,11 @@ function hourLabel(time) {
   return h < 12 ? `${h} am` : `${h - 12} pm`;
 }
 
-export function HourlyPanel({ days, localtime, unit }) {
+export function HourlyPanel({ days, localtime, minutesNow, unit }) {
   const [dayIndex, setDayIndex] = useState(0);
   const scroller = useRef(null);
-  const nowIndex = currentHourIndex(localtime);
+  // Follow the live clock so "Now" never lags a cached response.
+  const nowIndex = minutesNow != null ? Math.floor(minutesNow / 60) : currentHourIndex(localtime);
   const hours = days[dayIndex].hours;
 
   const temps = hours.map((h) => convertTemp(h.tempC, h.tempF, unit));
@@ -39,8 +40,8 @@ export function HourlyPanel({ days, localtime, unit }) {
   const tabs = days.map((d, i) => (i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.weekday));
 
   return (
-    <GlassCard className="p-4 sm:p-5">
-      <div className="mb-2 flex items-center justify-between gap-3">
+    <Card className="p-4 sm:p-5">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-ink-muted text-sm font-medium">Hourly forecast</h2>
         <div role="tablist" aria-label="Day" className="bg-ink-faint flex rounded-full p-1">
           {tabs.map((label, i) => (
@@ -50,10 +51,10 @@ export function HourlyPanel({ days, localtime, unit }) {
               type="button"
               aria-selected={dayIndex === i}
               onClick={() => setDayIndex(i)}
-              className={`relative rounded-full px-3.5 py-1.5 text-xs font-semibold sm:text-sm ${dayIndex === i ? 'text-[var(--glass-bg-strong)]' : 'text-ink-muted hover:text-ink'}`}
+              className={`relative rounded-full px-3.5 py-1.5 text-xs font-semibold sm:text-sm ${dayIndex === i ? 'text-[var(--on-accent)]' : 'text-ink-muted hover:text-ink'}`}
             >
               {dayIndex === i && (
-                <motion.span layoutId="day-tab" className="absolute inset-0 rounded-full bg-[var(--ink)]" transition={{ duration: 0.25 }} />
+                <motion.span layoutId="day-tab" className="absolute inset-0 rounded-full bg-[var(--accent)]" transition={{ duration: 0.25 }} />
               )}
               <span className="relative">{label}</span>
             </button>
@@ -117,6 +118,6 @@ export function HourlyPanel({ days, localtime, unit }) {
           </ol>
         </div>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

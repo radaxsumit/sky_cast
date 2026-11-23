@@ -1,65 +1,76 @@
 import { motion } from 'motion/react';
 import { NAV_ITEMS } from './navItems.js';
+import { ThemeSwitch } from './ThemeSwitch.jsx';
 
 function Logo() {
   return (
-    <svg viewBox="0 0 40 40" className="h-9 w-9" aria-hidden="true">
+    <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden="true">
       <defs>
         <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#3b82f6" />
-          <stop offset="1" stopColor="#f59e9e" />
+          <stop offset="0" stopColor="#3b6cf6" />
+          <stop offset="1" stopColor="#7fb3ff" />
         </linearGradient>
       </defs>
       <rect width="40" height="40" rx="12" fill="url(#logo-sky)" />
-      <circle cx="26" cy="15" r="6" fill="#ffd76a" />
-      <path d="M8 29c0-4 3-6.5 6.5-6.5 1-3 3.6-4.5 6.5-4.5 4 0 6.8 2.8 7 6.5 2.3.3 4 2 4 4.5H8z" fill="#fff" opacity=".95" />
+      <circle cx="26" cy="15" r="6" fill="#ffcc33" />
+      <path d="M8 29c0-4 3-6.5 6.5-6.5 1-3 3.6-4.5 6.5-4.5 4 0 6.8 2.8 7 6.5 2.3.3 4 2 4 4.5H8z" fill="#fff" />
     </svg>
   );
 }
 
-// Desktop/tablet: a slim glass rail. The active item gets a pill that glides between items.
-export function NavRail({ route, onNavigate }) {
+// Desktop/tablet: full-height sidebar attached to the left edge.
+export function NavRail({ route, onNavigate, dark, onThemeChange }) {
+  const main = NAV_ITEMS.filter((i) => i.id !== 'settings');
+  const settings = NAV_ITEMS.find((i) => i.id === 'settings');
+
+  const item = ({ id, label, icon: Icon, soon }) => {
+    const active = route === id;
+    return (
+      <li key={id}>
+        <button
+          type="button"
+          onClick={() => onNavigate(id)}
+          aria-current={active ? 'page' : undefined}
+          className={`group relative flex w-full flex-col items-center gap-1 rounded-2xl py-2.5 text-xs font-medium transition-colors ${active ? 'text-[var(--accent)]' : 'text-ink-muted hover:text-ink hover:bg-ink-faint'}`}
+        >
+          {active && (
+            <>
+              <motion.span
+                layoutId="rail-bg"
+                className="absolute inset-0 rounded-2xl bg-[color-mix(in_srgb,var(--accent)_13%,transparent)]"
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+              />
+              <motion.span
+                layoutId="rail-bar"
+                className="absolute top-1/2 -left-3 h-7 w-1 -translate-y-1/2 rounded-r-full bg-[var(--accent)]"
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+              />
+            </>
+          )}
+          <span className="relative">
+            <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.2 : 1.8} />
+            {soon && <span className="absolute -top-0.5 -right-1.5 h-2 w-2 rounded-full bg-[var(--color-sun)]" title="Coming soon" />}
+          </span>
+          <span className="relative">{label}</span>
+        </button>
+      </li>
+    );
+  };
+
   return (
     <nav
       aria-label="Main"
-      className="glass fixed top-4 bottom-4 left-4 z-30 hidden w-[76px] flex-col items-center rounded-[28px] py-5 md:flex"
+      className="fixed inset-y-0 left-0 z-30 hidden w-[92px] flex-col items-center border-r border-[var(--card-border)] bg-[var(--card)] px-3 py-6 transition-colors duration-500 md:flex"
     >
-      <a href="#/" aria-label="SkyCast home" className="mb-8">
+      <a href="#/" aria-label="SkyCast home" className="mb-1">
         <Logo />
       </a>
-      <ul className="flex flex-1 flex-col items-center gap-2">
-        {NAV_ITEMS.map(({ id, label, icon: Icon, soon }) => {
-          const active = route === id;
-          return (
-            <li key={id} className={id === 'settings' ? 'mt-auto' : undefined}>
-              <button
-                type="button"
-                onClick={() => onNavigate(id)}
-                aria-current={active ? 'page' : undefined}
-                className="group relative flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl text-[11px] font-medium"
-              >
-                {active && (
-                  <motion.span
-                    layoutId="rail-active"
-                    className="absolute inset-0 rounded-2xl bg-[var(--ink)]"
-                    transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                  />
-                )}
-                <Icon
-                  className={`relative h-5 w-5 transition-colors ${active ? 'text-[var(--glass-bg-strong)]' : 'text-ink-muted group-hover:text-ink'}`}
-                  strokeWidth={active ? 2.2 : 1.8}
-                />
-                <span className={`relative ${active ? 'text-[var(--glass-bg-strong)]' : 'text-ink-muted group-hover:text-ink'}`}>
-                  {label}
-                </span>
-                {soon && !active && (
-                  <span className="absolute top-1.5 right-2 h-1.5 w-1.5 rounded-full bg-[var(--color-sun)]" title="Coming soon" />
-                )}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <span className="font-display mb-8 text-sm font-semibold tracking-tight">SkyCast</span>
+      <ul className="flex w-full flex-1 flex-col gap-1.5">{main.map(item)}</ul>
+      <div className="flex w-full flex-col items-center gap-4">
+        <ThemeSwitch dark={dark} onChange={onThemeChange} size="sm" />
+        <ul className="w-full">{item(settings)}</ul>
+      </div>
     </nav>
   );
 }

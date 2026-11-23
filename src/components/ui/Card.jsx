@@ -1,6 +1,6 @@
-export function GlassCard({ as: Tag = 'section', className = '', children, ...rest }) {
+export function Card({ as: Tag = 'section', className = '', children, ...rest }) {
   return (
-    <Tag className={`glass rounded-[26px] ${className}`} {...rest}>
+    <Tag className={`card rounded-[26px] ${className}`} {...rest}>
       {children}
     </Tag>
   );

@@ -13,7 +13,7 @@ const pointAt = (p) => {
 };
 
 function remaining(minutesNow, sunsetMin, sunriseMin) {
-  if (sunriseMin == null || sunsetMin == null) return null;
+  if (sunriseMin == null || sunsetMin == null || sunsetMin <= sunriseMin) return null;
   const fmt = (m) => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`;
   if (minutesNow < sunriseMin) return `Sunrise in ${fmt(sunriseMin - minutesNow)}`;
   if (minutesNow < sunsetMin) return `${fmt(sunsetMin - minutesNow)} of daylight left`;
@@ -27,7 +27,7 @@ export function SunArc({ body, sunrise, sunset, sunriseMin, sunsetMin, minutesNo
   const note = remaining(minutesNow, sunsetMin, sunriseMin);
 
   return (
-    <figure className="hero-ink mx-auto w-full max-w-[230px] md:mx-0 md:max-w-[300px]" aria-label={`Sunrise ${sunrise}, sunset ${sunset}`}>
+    <figure className="photo-ink w-full max-w-[220px] sm:max-w-[260px]" aria-label={`Sunrise ${sunrise}, sunset ${sunset}`}>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full overflow-visible" aria-hidden="true">
         <line x1={6} x2={W - 6} y1={CY} y2={CY} stroke="currentColor" strokeOpacity="0.35" strokeWidth="1" />
         <path d={path} fill="none" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1.5" strokeDasharray="3 6" />

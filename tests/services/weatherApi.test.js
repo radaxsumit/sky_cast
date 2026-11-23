@@ -35,3 +35,11 @@ test('fetchForecast throws the proxy error message', async () => {
   vi.stubGlobal('fetch', respond(400, { error: 'No matching location found.' }));
   await expect(fetchForecast('zzzz-nowhere')).rejects.toThrow('No matching location found.');
 });
+
+test('fetchForecast with fresh skips the cache', async () => {
+  const f = respond(200, fixture);
+  vi.stubGlobal('fetch', f);
+  await fetchForecast('fresh-test-city');
+  await fetchForecast('fresh-test-city', { fresh: true });
+  expect(f).toHaveBeenCalledTimes(2);
+});

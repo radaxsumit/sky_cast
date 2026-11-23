@@ -1,17 +1,20 @@
-// First-load placeholder in the dashboard's shape, over the neutral sky.
+// First-load placeholder in the dashboard's shape.
 export function DashboardSkeleton() {
-  const block = 'glass animate-pulse rounded-[26px]';
+  const block = 'card animate-pulse rounded-[24px]';
   return (
     <div className="flex flex-col gap-5" aria-busy="true" aria-label="Loading weather">
-      <div className="flex flex-col gap-4 pt-6 pb-10">
-        <div className="h-5 w-48 animate-pulse rounded-full bg-white/30" />
-        <div className="h-36 w-64 animate-pulse rounded-3xl bg-white/20" />
-        <div className="h-5 w-40 animate-pulse rounded-full bg-white/25" />
+      <div className="flex flex-col gap-2 pb-1">
+        <div className="bg-ink-faint h-8 w-48 animate-pulse rounded-xl" />
+        <div className="bg-ink-faint h-4 w-72 animate-pulse rounded-full" />
       </div>
-      <div className={`${block} h-48`} />
-      <div className="grid gap-5 md:grid-cols-3">
-        <div className={`${block} h-64`} />
-        <div className={`${block} h-64 md:col-span-2`} />
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="h-[420px] animate-pulse rounded-[30px] bg-slate-300/60 lg:col-span-8 dark:bg-slate-800" />
+        <div className={`${block} h-[420px] lg:col-span-4`} />
+      </div>
+      <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className={`${block} h-40`} />
+        ))}
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ export function Toast({ message, tone = 'error', onDismiss }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-            className="glass pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl py-2.5 pr-2 pl-4 text-sm"
+            className="card pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl py-2.5 pr-2 pl-4 text-sm"
           >
             <span className={`h-2 w-2 shrink-0 rounded-full ${tone === 'error' ? 'bg-rose-500' : 'bg-[var(--color-sun)]'}`} />
             <span className="text-ink">{message}</span>

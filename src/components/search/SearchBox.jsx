@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Loader2, MapPin, Search, Star } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { locationQuery } from '../../lib/locationQuery.js';
+import { findSaved } from '../../lib/savedCities.js';
+import { enterChoice } from '../../lib/searchChoice.js';
 import { searchPlaces } from '../../services/weatherApi.js';
 
 /**
@@ -43,6 +45,7 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
     return () => {
       cancelled = true;
       clearTimeout(timer);
+      setLoading(false);
     };
   }, [text]);
 
@@ -71,6 +74,8 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
   const onChange = (e) => {
     const value = e.target.value;
     setText(value);
+    // Results no longer match what's typed: drop the highlight so Enter can't pick a stale place.
+    setActive(-1);
     if (value.trim().length < 2) {
       setResults([]);
       setOpen(false);
@@ -88,11 +93,12 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
       setActive((i) => (i <= 0 ? results.length - 1 : i - 1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (open && results[active]) choose(results[active]);
-      else if (results[0] && searched === text.trim()) choose(results[0]);
-      else if (text.trim()) {
-        onSelect(text.trim());
+      const choice = enterChoice({ text, searched, results, active });
+      if (choice?.place) choose(choice.place);
+      else if (choice?.query) {
+        onSelect(choice.query);
         reset();
+        inputRef.current?.blur();
       }
     } else if (e.key === 'Escape') {
       setOpen(false);
@@ -102,7 +108,9 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
   const toggleSave = (e, place) => {
     e.stopPropagation();
     e.preventDefault();
-    if (saved.has(place.id)) saved.remove(place.id);
+    // Match by coordinates too, so a place saved from the Today screen isn't saved twice.
+    const existing = findSaved(saved.cities, place.lat, place.lon);
+    if (existing) saved.remove(existing.id);
     else saved.add(place);
   };
 
@@ -110,7 +118,7 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
-      <div className="glass flex items-center gap-2 rounded-2xl px-3.5">
+      <div className="card flex items-center gap-2 rounded-2xl px-3.5">
         <Search className="text-ink-muted h-4 w-4 shrink-0" aria-hidden="true" />
         <input
           ref={inputRef}
@@ -133,6 +141,9 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
         {loading && <Loader2 className="text-ink-muted h-4 w-4 shrink-0 animate-spin" aria-label="Searching" />}
       </div>
 
+      <span className="sr-only" role="status" aria-live="polite">
+        {searched && !loading ? (results.length ? `${results.length} places found` : 'No places found') : ''}
+      </span>
       <AnimatePresence>
         {(open && results.length > 0) || showEmpty ? (
           <motion.div
@@ -140,31 +151,36 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.16 }}
-            className="glass absolute top-full right-0 left-0 z-40 mt-2 overflow-hidden rounded-2xl !bg-[var(--glass-bg-strong)] p-1.5"
+            className="card absolute top-full right-0 left-0 z-40 mt-2 overflow-hidden rounded-2xl !bg-[var(--card-strong)] p-1.5"
           >
             {showEmpty ? (
               <p className="text-ink-muted px-3 py-3 text-sm">No places match “{searched}”. Try a nearby city or check the spelling.</p>
             ) : (
               <ul id={listId} role="listbox" aria-label="Matching places">
                 {results.map((place, i) => {
-                  const isSaved = saved?.has(place.id);
+                  const isSaved = Boolean(saved && findSaved(saved.cities, place.lat, place.lon));
                   return (
                     <li
                       key={place.id}
-                      id={`${listId}-${i}`}
-                      role="option"
-                      aria-selected={i === active}
+                      role="none"
                       onPointerEnter={() => setActive(i)}
-                      onClick={() => choose(place)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 ${i === active ? 'bg-ink-faint' : ''}`}
+                      className={`flex items-center gap-1 rounded-xl pr-1.5 ${i === active ? 'bg-ink-faint' : ''}`}
                     >
-                      <MapPin className="text-ink-muted h-4 w-4 shrink-0" aria-hidden="true" />
-                      <span className="min-w-0 flex-1">
-                        <span className="text-ink block truncate text-sm font-semibold">{place.name}</span>
-                        <span className="text-ink-muted block truncate text-xs">
-                          {[place.region, place.country].filter(Boolean).join(', ')}
+                      <div
+                        id={`${listId}-${i}`}
+                        role="option"
+                        aria-selected={i === active}
+                        onClick={() => choose(place)}
+                        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 px-3 py-2.5"
+                      >
+                        <MapPin className="text-ink-muted h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span className="min-w-0 flex-1">
+                          <span className="text-ink block truncate text-sm font-semibold">{place.name}</span>
+                          <span className="text-ink-muted block truncate text-xs">
+                            {[place.region, place.country].filter(Boolean).join(', ')}
+                          </span>
                         </span>
-                      </span>
+                      </div>
                       {saved && (
                         <button
                           type="button"

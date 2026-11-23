@@ -1,9 +1,8 @@
 # SkyCast
 
-A weather app with a living sky. The background is drawn live from the searched city's local time and current
-conditions: the sun travels its arc between sunrise and sunset, the moon shows its real phase, and clouds drift,
-rain and snow fall, fog settles and lightning flashes to match the forecast. Frosted-glass panels on top switch
-between light and dark with the sky.
+A clean weather dashboard where the weather card is a real photograph matched to the searched city's actual
+conditions and local time of day: a sunny morning, a starry clear night, rain on city streets, a storm, fog,
+snow or a sunset, all from the city's own clock, not yours.
 
 🔗 **Live:** [sky-cast-topaz.vercel.app](https://sky-cast-topaz.vercel.app/)
 
@@ -11,19 +10,18 @@ between light and dark with the sky.
 
 ## Features
 
-- **Living sky:** dawn, day, golden hour, dusk and night palettes that blend minute by minute, plus clouds,
-  rain, snow, sleet, fog/haze and thunderstorms driven by WeatherAPI condition codes. Try any scene with
-  `?scene=<phase>[,<code>]`, e.g. `?scene=dusk,1195` (heavy rain at dusk) or `?scene=night,1000`.
+- **Weather photo card:** 13 photographs chosen by WeatherAPI condition code and time of day (dawn, day, golden
+  hour, dusk, night). Preview any combination with `?scene=<phase>[,<code>]`, e.g. `?scene=night,1195`.
 - **Today:** big current temperature, daylight arc with time left, a 24-hour forecast for today, tomorrow and the
   day after, a 3-day range view, and tiles for air quality (US EPA), UV, wind with compass, humidity and dew point,
   feels-like, visibility, pressure and cloud cover.
 - **Search:** suggestions as you type, keyboard navigation, and exact-place selection (San José, Costa Rica stays
   San José, Costa Rica).
-- **Saved places:** pin up to 8 cities. Each card shows a mini version of that city's sky right now.
-- **Clock:** a full-screen standby clock over the live sky.
-- **Settings:** °C/°F, km/h or mph, auto or manual light/dark panels, reduced motion, and a starting city.
-- **Accessible:** text passes WCAG AA over every sky, motion respects `prefers-reduced-motion`, and search is
-  a proper ARIA combobox.
+- **Saved places:** pin up to 8 cities, each shown with its own weather photo and local time.
+- **Clock:** a full-screen standby clock over the current weather photo.
+- **Light and dark themes:** follow your device or pick one; the sidebar has a quick sun/moon switch.
+- **Settings:** °C/°F, km/h or mph, theme, reduced motion, and a starting city.
+- **Accessible:** visible keyboard focus, `prefers-reduced-motion` respected, and search is an ARIA combobox.
 
 ## Tech stack
 
@@ -40,7 +38,7 @@ npm run dev
 ```
 
 ```bash
-npm test        # unit tests (data mapping, scene logic, proxy, search, cache)
+npm test        # unit tests (data mapping, photo + scene logic, proxy, search, cache)
 npm run lint
 npm run build
 ```
@@ -62,7 +60,7 @@ api/                      Vercel functions + shared proxy logic (api/_lib)
 src/
   app/                    App shell, routing (hash), views: Dashboard, Saved, Clock, Settings, Coming soon
   components/             hero, hourly, forecast, tiles, search, nav, ui
-  scene/                  resolveScene (time + weather → sky), palettes, SkyScene and its layers
+  scene/                  resolveScene (local time + weather → phase), photo picker, ?scene= preview
   hooks/                  weather loading, settings, saved cities, local clock, routing, reduced motion
   lib/                    condition codes, icon mapping, time, units, AQI, descriptions, cache, chart maths
   services/weatherApi.js  calls the proxy, normalises and caches responses
@@ -77,3 +75,20 @@ docs/                     design spec, implementation plan, screenshots
 ## License
 
 MIT
+
+## Photo credits
+
+All weather photographs are from [Unsplash](https://unsplash.com/license) (free to use):
+[clear day](https://unsplash.com/photos/TSgwbumanuE) ·
+[clear night](https://unsplash.com/photos/E0AHdsENmDg) ·
+[partly cloudy](https://unsplash.com/photos/MSrUdvVrKEE) ·
+[cloudy](https://unsplash.com/photos/9hIJJghBqb0) ·
+[rain](https://unsplash.com/photos/jYjuUXgi2NU) ·
+[rain at night](https://unsplash.com/photos/FGjR4IGwP7U) ·
+[thunderstorm](https://unsplash.com/photos/ESL1rIs9j48) ·
+[snow](https://unsplash.com/photos/R5SrmZPoO40) ·
+[fog](https://unsplash.com/photos/E0e1NmVclRo) ·
+[haze](https://unsplash.com/photos/iOrTzNpeSt8) ·
+[dawn](https://unsplash.com/photos/vTitvl4O2kE) ·
+[sunset](https://unsplash.com/photos/-IMlv9Jlb24) ·
+[cloudy night](https://unsplash.com/photos/Q-NAk1DFYkA)

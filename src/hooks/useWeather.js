@@ -13,20 +13,22 @@ export function useWeather() {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
+  const [lastQuery, setLastQuery] = useState(null);
   const [latest] = useState(createLatest);
   const hasData = useRef(false);
 
-  const load = useCallback(async (query) => {
+  const load = useCallback(async (query, { fresh = false } = {}) => {
     const q = typeof query === 'string' ? query.trim() : locationQuery(query);
     if (!q) return;
     const token = latest.next();
     setStatus(hasData.current ? 'refreshing' : 'initial');
     setError(null);
     try {
-      const model = await fetchForecast(q);
+      const model = await fetchForecast(q, { fresh });
       if (!latest.isLatest(token)) return;
       hasData.current = true;
       setData(model);
+      setLastQuery(q);
       setStatus('ready');
     } catch (e) {
       if (!latest.isLatest(token)) return;
@@ -37,7 +39,7 @@ export function useWeather() {
 
   const clearError = useCallback(() => setError(null), []);
 
-  return { data, status, error, load, clearError };
+  return { data, status, error, load, lastQuery, clearError };
 }
 
 /**

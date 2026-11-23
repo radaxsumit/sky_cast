@@ -67,7 +67,12 @@ function skyAt(now, sunrise, sunset, phase) {
  * Turns local time + current weather into everything the sky needs to draw.
  * @returns {{phase, sky, body, stars, clouds, dim, fog, precip, precipIntensity, lightning, glass, key}}
  */
-export function resolveScene({ minutesNow, sunriseMin, sunsetMin, isDay, code, text = '', cloud = 0, moonPhase }) {
+export function resolveScene({ minutesNow, sunriseMin: rise, sunsetMin: set, isDay, code, text = '', cloud = 0, moonPhase }) {
+  // Near the poles the sun can set after midnight (sunset < sunrise) or the times can coincide.
+  // Those days have no usable arc, so treat them like polar day/night and trust the API's isDay.
+  const usable = rise != null && set != null && set > rise;
+  const sunriseMin = usable ? rise : null;
+  const sunsetMin = usable ? set : null;
   const info = conditionInfo(code, text);
   const phase = phaseAt(minutesNow, sunriseMin, sunsetMin, isDay);
   const dim = DIM[info.group];

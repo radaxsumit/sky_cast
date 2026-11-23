@@ -1,7 +1,7 @@
 import { CalendarDays, Droplets } from 'lucide-react';
 import { tempColor } from '../../lib/describe.js';
 import { convertTemp } from '../../lib/units.js';
-import { CardTitle, GlassCard } from '../ui/GlassCard.jsx';
+import { CardTitle, Card } from '../ui/Card.jsx';
 import { WeatherIcon } from '../ui/WeatherIcon.jsx';
 
 // Low→high bar on a shared scale across all 3 days, coloured by real temperature.
@@ -21,7 +21,7 @@ function TempRangeBar({ day, range, nowC }) {
       />
       {nowC != null && (
         <div
-          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[var(--ink)] shadow"
+          className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[var(--accent)] shadow"
           style={{ left: `${((Math.min(Math.max(nowC, day.minC), day.maxC) - range.min) / span) * 100}%` }}
         />
       )}
@@ -32,7 +32,7 @@ function TempRangeBar({ day, range, nowC }) {
 export function ForecastPanel({ days, unit, currentC, className = '' }) {
   const range = { min: Math.min(...days.map((d) => d.minC)), max: Math.max(...days.map((d) => d.maxC)) };
   return (
-    <GlassCard className={`flex flex-col p-5 ${className}`}>
+    <Card className={`flex flex-col p-5 ${className}`}>
       <CardTitle icon={CalendarDays}>3-day forecast</CardTitle>
       <ul className="flex flex-1 flex-col justify-around">
         {days.map((day, i) => (
@@ -58,6 +58,6 @@ export function ForecastPanel({ days, unit, currentC, className = '' }) {
           </li>
         ))}
       </ul>
-    </GlassCard>
+    </Card>
   );
 }

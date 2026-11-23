@@ -4,7 +4,7 @@ import { usePersistentState } from './usePersistentState.js';
 export const DEFAULT_SETTINGS = {
   unit: 'C', // 'C' | 'F'
   wind: 'kph', // 'kph' | 'mph'
-  appearance: 'auto', // 'auto' | 'light' | 'dark' — UI glass only, never the sky
+  appearance: 'auto', // 'auto' (follow the device) | 'light' | 'dark'
   motion: 'system', // 'system' | 'on' (reduce) | 'off' (full)
   defaultCity: null, // SavedCity | null → use geolocation
 };

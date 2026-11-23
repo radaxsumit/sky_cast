@@ -16,9 +16,9 @@ async function getJson(url) {
   return body;
 }
 
-export async function fetchForecast(query) {
+export async function fetchForecast(query, { fresh = false } = {}) {
   const key = query.trim().toLowerCase();
-  const hit = forecastCache.get(key);
+  const hit = fresh ? undefined : forecastCache.get(key);
   if (hit) return hit;
   const raw = await getJson(`/api/weather?${new URLSearchParams({ q: query.trim() })}`);
   const model = normalizeForecast(raw);

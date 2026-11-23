@@ -105,3 +105,16 @@ describe('glass and colours', () => {
     expect(at(700, { code: 1195 }).key).toBe('day-rain');
   });
 });
+
+describe('sunset after midnight (high-latitude summer)', () => {
+  test('noon is day, not night', () => {
+    const s = resolveScene({ minutesNow: 720, sunriseMin: 175, sunsetMin: 3, isDay: true, code: 1000, cloud: 0 });
+    expect(s.phase).toBe('day');
+    expect(s.body.kind).toBe('sun');
+    expect(Number.isFinite(s.body.progress)).toBe(true);
+  });
+  test('equal sunrise and sunset never yields NaN', () => {
+    const s = resolveScene({ minutesNow: 300, sunriseMin: 300, sunsetMin: 300, isDay: true, code: 1000, cloud: 0 });
+    expect(Number.isFinite(s.body.progress)).toBe(true);
+  });
+});
