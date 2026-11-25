@@ -1,8 +1,41 @@
-import { motion } from 'motion/react';
+// Day/night switch matching the FigJam reference: sun with halo rings and clouds by day,
+// cratered moon with halo rings and stars by night. Sized in em, so `size` scales it cleanly.
 
-// Sun-and-clouds / moon-and-stars switch (FigJam toggle reference).
+const SIZES = { sm: 3.5, md: 5 }; // px per em → sm ≈ 66×25, md ≈ 95×35
+
+const SPARKLE = 'M0,-5 C0.6,-1.6 1.6,-0.6 5,0 C1.6,0.6 0.6,1.6 0,5 C-0.6,1.6 -1.6,0.6 -5,0 C-1.6,-0.6 -0.6,-1.6 0,-5Z';
+const STARS = [
+  [30, 19, 1],
+  [56, 12, 0.55],
+  [47, 37, 0.8],
+  [22, 49, 0.5],
+  [74, 47, 0.45],
+  [69, 26, 0.35],
+];
+const DOTS = [
+  [40, 14],
+  [62, 52],
+  [15, 31],
+  [84, 20],
+];
+const FRONT_CLOUD = [
+  [110, 74, 20],
+  [133, 62, 19],
+  [156, 54, 20],
+  [179, 43, 19],
+  [196, 58, 17],
+  [150, 80, 18],
+  [122, 84, 16],
+];
+const BACK_CLOUD = [
+  [100, 61, 18],
+  [124, 50, 18],
+  [148, 41, 19],
+  [172, 30, 18],
+  [191, 38, 16],
+];
+
 export function ThemeSwitch({ dark, onChange, size = 'md' }) {
-  const s = size === 'sm' ? { w: 56, h: 30, knob: 22, pad: 4 } : { w: 88, h: 44, knob: 34, pad: 5 };
   return (
     <button
       type="button"
@@ -10,37 +43,47 @@ export function ThemeSwitch({ dark, onChange, size = 'md' }) {
       aria-checked={dark}
       aria-label="Dark mode"
       onClick={() => onChange(!dark)}
-      className="relative shrink-0 overflow-hidden rounded-full shadow-inner ring-1 ring-black/10 transition-colors duration-500"
-      style={{
-        width: s.w,
-        height: s.h,
-        background: dark ? 'linear-gradient(135deg,#1b2347,#323d72)' : 'linear-gradient(135deg,#4f9df0,#a7d4ff)',
-      }}
+      className="tt"
+      data-dark={dark ? 'true' : 'false'}
+      style={{ fontSize: SIZES[size] ?? SIZES.md }}
     >
-      <span
-        className={`absolute rounded-full bg-white/85 blur-[1px] transition-opacity duration-500 ${dark ? 'opacity-0' : 'opacity-100'}`}
-        style={{ right: s.pad, bottom: s.pad - 1, width: s.w * 0.42, height: s.h * 0.42 }}
-      />
-      {[0.22, 0.36, 0.5].map((x, i) => (
-        <span
-          key={x}
-          className={`absolute h-[3px] w-[3px] rounded-full bg-white transition-opacity duration-500 ${dark ? 'opacity-90' : 'opacity-0'}`}
-          style={{ left: s.w * x, top: s.h * (i % 2 ? 0.62 : 0.28) }}
-        />
-      ))}
-      <motion.span
-        className="absolute rounded-full shadow-md"
-        style={{ top: (s.h - s.knob) / 2, width: s.knob, height: s.knob }}
-        animate={{ left: dark ? s.w - s.knob - s.pad : s.pad, background: dark ? '#dfe4f2' : '#ffcc33' }}
-        transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-      >
-        {dark && (
-          <>
-            <span className="absolute rounded-full bg-[#b6bed6]" style={{ top: '22%', left: '22%', width: '24%', height: '24%' }} />
-            <span className="absolute rounded-full bg-[#b6bed6]" style={{ bottom: '20%', right: '22%', width: '30%', height: '30%' }} />
-          </>
-        )}
-      </motion.span>
+      <span className="tt-track" aria-hidden="true">
+        <span className="tt-rings">
+          <span />
+          <span />
+          <span />
+        </span>
+
+        <svg className="tt-stars" viewBox="0 0 190 70" preserveAspectRatio="none">
+          {STARS.map(([x, y, s], i) => (
+            <path key={i} d={SPARKLE} transform={`translate(${x} ${y}) scale(${s})`} fill="#fff" />
+          ))}
+          {DOTS.map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="1.1" fill="#fff" opacity="0.8" />
+          ))}
+        </svg>
+
+        <svg className="tt-clouds" viewBox="0 0 190 70" preserveAspectRatio="none">
+          <g fill="#ffffff" opacity="0.55">
+            {BACK_CLOUD.map(([x, y, r], i) => (
+              <circle key={i} cx={x} cy={y} r={r} />
+            ))}
+          </g>
+          <g fill="#ffffff">
+            {FRONT_CLOUD.map(([x, y, r], i) => (
+              <circle key={i} cx={x} cy={y} r={r} />
+            ))}
+          </g>
+        </svg>
+      </span>
+
+      <span className="tt-knob" aria-hidden="true">
+        <span className="tt-moon">
+          <span />
+          <span />
+          <span />
+        </span>
+      </span>
     </button>
   );
 }

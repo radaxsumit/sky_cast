@@ -118,7 +118,7 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
-      <div className="card flex items-center gap-2 rounded-2xl px-3.5">
+      <div className="card flex cursor-text items-center gap-2 rounded-2xl px-3.5 transition-shadow focus-within:border-transparent focus-within:ring-2 focus-within:ring-[var(--accent)]" onClick={() => inputRef.current?.focus()}>
         <Search className="text-ink-muted h-4 w-4 shrink-0" aria-hidden="true" />
         <input
           ref={inputRef}
@@ -136,7 +136,7 @@ export function SearchBox({ onSelect, saved, placeholder = 'Search a city', clas
           placeholder={placeholder}
           autoComplete="off"
           spellCheck={false}
-          className="text-ink placeholder:text-ink-muted h-11 w-full min-w-0 bg-transparent text-[15px] outline-none"
+          className="text-ink placeholder:text-ink-muted h-11 w-full min-w-0 bg-transparent text-[15px] outline-none focus-visible:outline-none"
         />
         {loading && <Loader2 className="text-ink-muted h-4 w-4 shrink-0 animate-spin" aria-label="Searching" />}
       </div>

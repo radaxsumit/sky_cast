@@ -53,6 +53,19 @@ routes, so `npm run dev` works without the Vercel CLI.
 | ----------------- | ------------------------------------------------------- |
 | `WEATHER_API_KEY` | `.env` locally; Vercel → Project → Settings → Environment Variables |
 
+What the proxy (`api/_lib/weatherapi.js`) does:
+
+- Adds the key on the server only. The Network tab shows `/api/weather?q=…`, never the key or WeatherAPI's URL.
+- Returns only the fields the app uses (about 13 KB instead of WeatherAPI's 50 KB raw response).
+- Accepts `GET` only, validates `q` (letters, digits and place-name punctuation, max 100 characters) and ignores
+  every other parameter.
+- Refuses requests made by other websites (`Sec-Fetch-Site: cross-site`), so nobody can use your key from their page.
+- Rate-limits each visitor to 60 requests a minute.
+- Logs upstream key or quota errors on the server and shows users a generic message instead.
+
+The client shares identical requests already in flight and caches forecasts for 10 minutes, so the app never fires
+duplicate calls.
+
 ## Project structure
 
 ```
