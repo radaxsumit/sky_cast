@@ -1,22 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/Icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sky</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#eef1f6" />
+    <title>SkyCast — Live Weather</title>
+    <meta
+      name="description"
+      content="SkyCast: a photo-rich weather dashboard with hourly and 3-day forecasts, air quality and more."
+    />
     <script>
-      (function () {
-        const theme = localStorage.getItem("theme");
-        if (
-                theme === "dark" ||
-                (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
-        ) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      })();
+      // Apply the saved theme before first paint to avoid a light flash in dark mode.
+      try {
+        var a = (JSON.parse(localStorage.getItem('skycast.settings')) || {}).appearance || 'auto';
+        var dark = a === 'dark' || (a === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch (e) {}
     </script>
   </head>
   <body>

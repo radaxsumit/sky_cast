@@ -23,7 +23,13 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Base rule can't see JSX usage; component-cased names (and `motion`) are used as <Tag/>.
+      'no-unused-vars': ['error', { varsIgnorePattern: '^([A-Z_]|motion$)', argsIgnorePattern: '^[A-Z_]' }],
     },
+  },
+  {
+    // Server-side and tooling code runs on Node.
+    files: ['api/**/*.js', 'vite.config.js', 'vite-plugin-*.js', 'vitest.config.js', 'tests/**/*.js'],
+    languageOptions: { globals: { ...globals.node } },
   },
 ])

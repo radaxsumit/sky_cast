@@ -1,12 +1,276 @@
-@import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+@import 'tailwindcss';
 
-.recharts-wrapper,
-.recharts-surface {
-    outline: none !important;
+@theme {
+  --font-display: 'Bricolage Grotesque Variable', 'Onest Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Onest Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-sun: #ffb020;
+  --ease-sky: cubic-bezier(0.22, 1, 0.36, 1);
 }
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
+
+/* Two solid themes. Cards sit on a quiet page background; photographs carry the weather. */
+:root,
+[data-theme='light'] {
+  --page: #eef1f6;
+  --card: #ffffff;
+  --card-strong: #ffffff;
+  --card-border: rgba(15, 23, 42, 0.06);
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px -18px rgba(15, 23, 42, 0.18);
+  --ink: #0f172a;
+  --ink-muted: #5b6478;
+  --ink-faint: rgba(15, 23, 42, 0.07);
+  --accent: #2f5bea;
+  --on-accent: #ffffff;
+}
+
+[data-theme='dark'] {
+  --page: #0a0e1a;
+  --card: #121829;
+  --card-strong: #182036;
+  --card-border: rgba(148, 163, 255, 0.08);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px -20px rgba(0, 0, 0, 0.8);
+  --ink: #eef2ff;
+  --ink-muted: #9aa5c4;
+  --ink-faint: rgba(238, 242, 255, 0.08);
+  --accent: #7c9bff;
+  --on-accent: #0a0e1a;
+}
+
+html {
+  background: var(--page);
+  transition: background-color 0.4s var(--ease-sky);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--page);
+  font-family: var(--font-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    color: var(--ink);
+    transition:
+      background-color 0.4s var(--ease-sky),
+      color 0.4s var(--ease-sky);
+  }
+
+  .text-ink {
+    color: var(--ink);
+  }
+  .text-ink-muted {
+    color: var(--ink-muted);
+  }
+  .border-ink-faint {
+    border-color: var(--ink-faint);
+  }
+  .bg-ink-faint {
+    background-color: var(--ink-faint);
+  }
+
+  /* White text over photographs; a soft shadow keeps it legible on bright skies. */
+  .photo-ink {
+    color: #fff;
+    text-shadow:
+      0 1px 2px rgba(4, 10, 30, 0.35),
+      0 6px 24px rgba(4, 10, 30, 0.35);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* In the base layer so components can override it (e.g. inputs ring their whole field instead). */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.blink {
+  animation: blink 2s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blink {
+    animation: none !important;
+  }
+}
+
+/* ---- Day/night theme switch (see ThemeSwitch.jsx). 1em = size unit; track is 19em × 7em. ---- */
+@layer components {
+  .tt {
+    --tt-ease: cubic-bezier(0.56, 1.35, 0.52, 1);
+    --tt-travel: 12em;
+    position: relative;
+    display: inline-block;
+    width: 19em;
+    height: 7em;
+    flex-shrink: 0;
+    border-radius: 3.5em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tt:focus-visible {
+    outline-offset: 3px;
+    border-radius: 3.5em;
+  }
+
+  .tt-track {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    background: #3d8bd9;
+    box-shadow:
+      inset 0.3em 0.45em 0.7em rgba(0, 0, 0, 0.35),
+      inset -0.15em -0.15em 0.35em rgba(255, 255, 255, 0.18);
+    transition: background-color 0.6s ease;
+  }
+  .tt[data-dark='true'] .tt-track {
+    background: #1d2133;
+  }
+
+  /* Halo rings centred on the knob, travelling with it. */
+  .tt-rings {
+    position: absolute;
+    top: 3.5em;
+    left: 3.5em;
+    transition: transform 0.7s var(--tt-ease);
+  }
+  .tt-rings > span {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.13);
+    transform: translate(-50%, -50%);
+    transition: background-color 0.6s ease;
+  }
+  .tt-rings > span:nth-child(1) {
+    width: 17.5em;
+    height: 17.5em;
+  }
+  .tt-rings > span:nth-child(2) {
+    width: 13.5em;
+    height: 13.5em;
+  }
+  .tt-rings > span:nth-child(3) {
+    width: 9.6em;
+    height: 9.6em;
+  }
+  .tt[data-dark='true'] .tt-rings {
+    transform: translateX(var(--tt-travel));
+  }
+  .tt[data-dark='true'] .tt-rings > span {
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .tt-clouds,
+  .tt-stars {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition:
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.5s ease;
+  }
+  .tt-clouds {
+    filter: drop-shadow(0 -0.15em 0.35em rgba(0, 0, 0, 0.15));
+  }
+  .tt[data-dark='true'] .tt-clouds {
+    transform: translateY(110%);
+  }
+  .tt-stars {
+    opacity: 0;
+    transform: translateY(-60%);
+  }
+  .tt[data-dark='true'] .tt-stars {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Knob: sun by default; the moon slides across it at night. */
+  .tt-knob {
+    position: absolute;
+    top: 0.7em;
+    left: 0.7em;
+    width: 5.6em;
+    height: 5.6em;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #f7c43a;
+    box-shadow:
+      0.2em 0.3em 0.55em rgba(0, 0, 0, 0.35),
+      inset -0.35em -0.45em 0.5em rgba(160, 95, 0, 0.35),
+      inset 0.3em 0.35em 0.4em rgba(255, 255, 255, 0.55);
+    transition: transform 0.7s var(--tt-ease);
+  }
+  .tt[data-dark='true'] .tt-knob {
+    transform: translateX(var(--tt-travel));
+  }
+  .tt-moon {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #c5cad3;
+    box-shadow:
+      inset -0.35em -0.45em 0.5em rgba(0, 0, 0, 0.25),
+      inset 0.3em 0.35em 0.4em rgba(255, 255, 255, 0.6);
+    transform: translateX(100%);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tt[data-dark='true'] .tt-moon {
+    transform: translateX(0);
+  }
+  .tt-moon > span {
+    position: absolute;
+    border-radius: 50%;
+    background: #969dad;
+    box-shadow: inset 0.1em 0.15em 0.2em rgba(0, 0, 0, 0.28);
+  }
+  .tt-moon > span:nth-child(1) {
+    top: 1.3em;
+    left: 0.9em;
+    width: 1.7em;
+    height: 1.7em;
+  }
+  .tt-moon > span:nth-child(2) {
+    top: 0.9em;
+    left: 3.2em;
+    width: 1em;
+    height: 1em;
+  }
+  .tt-moon > span:nth-child(3) {
+    top: 3.1em;
+    left: 2.7em;
+    width: 1.8em;
+    height: 1.8em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tt *,
+    .tt *::before {
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

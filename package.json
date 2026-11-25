@@ -7,16 +7,18 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@bybas/weather-icons": "^2.0.0",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/onest": "^5.3.1",
     "@tailwindcss/vite": "^4.1.18",
     "lucide-react": "^0.562.0",
     "motion": "^12.34.2",
-    "prop-types": "^15.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "recharts": "^3.6.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
@@ -28,6 +30,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitest": "^5.1.1"
   }
 }
