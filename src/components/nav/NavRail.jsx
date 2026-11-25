@@ -4,17 +4,14 @@ import { ThemeSwitch } from './ThemeSwitch.jsx';
 
 function Logo() {
   return (
-    <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden="true">
-      <defs>
-        <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#3b6cf6" />
-          <stop offset="1" stopColor="#7fb3ff" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="12" fill="url(#logo-sky)" />
-      <circle cx="26" cy="15" r="6" fill="#ffcc33" />
-      <path d="M8 29c0-4 3-6.5 6.5-6.5 1-3 3.6-4.5 6.5-4.5 4 0 6.8 2.8 7 6.5 2.3.3 4 2 4 4.5H8z" fill="#fff" />
-    </svg>
+    <img
+      src="/icon-256.png"
+      alt=""
+      width={44}
+      height={44}
+      draggable={false}
+      className="h-11 w-11 drop-shadow-[0_6px_14px_rgba(47,91,234,0.35)]"
+    />
   );
 }
 
