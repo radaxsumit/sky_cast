@@ -4,7 +4,9 @@ A clean weather dashboard where the weather card is a real photograph matched to
 conditions and local time of day: a sunny morning, a starry clear night, rain on city streets, a storm, fog,
 snow or a sunset, all from the city's own clock, not yours.
 
-🔗 **Live:** [sky-cast-topaz.vercel.app](https://sky-cast-topaz.vercel.app/)
+🔗 **Live Demo:** [SkyCast Weather App](https://sky-cast-topaz.vercel.app/)
+
+📂 **GitHub Repo:** [View Source Code](https://github.com/radaxsumit/sky_cast)
 
 > Screenshots in `docs/screenshots/` show the previous design and will be refreshed for the redesign.
 
