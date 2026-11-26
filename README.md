@@ -1,87 +1,162 @@
-# SkyCast
+<p align="center">
+  <img src="./public/icon-256.png" alt="SkyCast app icon" width="96" height="96" />
+</p>
 
-A clean weather dashboard where the weather card is a real photograph matched to the searched city's actual
-conditions and local time of day: a sunny morning, a starry clear night, rain on city streets, a storm, fog,
-snow or a sunset, all from the city's own clock, not yours.
+<h1 align="center">SkyCast</h1>
 
-🔗 **Live Demo:** [SkyCast Weather App](https://sky-cast-topaz.vercel.app/)
+<p align="center">
+  Weather that looks like the sky outside. Every city gets a real photograph matched to its current conditions
+  and its own local time of day.
+</p>
 
-📂 **GitHub Repo:** [View Source Code](https://github.com/radaxsumit/sky_cast)
+<p align="center">
+  <a href="https://sky-cast-topaz.vercel.app/"><strong>Live demo</strong></a> ·
+  <a href="#getting-started">Run it locally</a> ·
+  <a href="#deploying-to-vercel">Deploy</a>
+</p>
 
-> Screenshots in `docs/screenshots/` show the previous design and will be refreshed for the redesign.
+![SkyCast dashboard in light mode: Mumbai, sunny, 30°C, with hourly and 3-day forecasts](./docs/screenshots/dashboard-light.webp)
+
+<p align="center">
+  <img src="./docs/screenshots/dashboard-dark.webp" alt="Dark mode: Los Angeles on a clear night, 17°C" width="74%" />
+  <img src="./docs/screenshots/mobile.webp" alt="Mobile layout: Singapore, light rain shower, 30°C" width="21.5%" />
+</p>
+<p align="center"><sub>Dark mode on a clear night in Los Angeles · Mobile in a Singapore rain shower</sub></p>
 
 ## Features
 
-- **Weather photo card:** 13 photographs chosen by WeatherAPI condition code and time of day (dawn, day, golden
-  hour, dusk, night). Preview any combination with `?scene=<phase>[,<code>]`, e.g. `?scene=night,1195`.
-- **Today:** big current temperature, daylight arc with time left, a 24-hour forecast for today, tomorrow and the
-  day after, a 3-day range view, and tiles for air quality (US EPA), UV, wind with compass, humidity and dew point,
-  feels-like, visibility, pressure and cloud cover.
-- **Search:** suggestions as you type, keyboard navigation, and exact-place selection (San José, Costa Rica stays
-  San José, Costa Rica).
-- **Saved places:** pin up to 8 cities, each shown with its own weather photo and local time.
-- **Clock:** a full-screen standby clock over the current weather photo.
-- **Light and dark themes:** follow your device or pick one; the sidebar has a quick sun/moon switch.
-- **Settings:** °C/°F, km/h or mph, theme, reduced motion, and a starting city.
-- **Accessible:** visible keyboard focus, `prefers-reduced-motion` respected, and search is an ARIA combobox.
+- **A photo for every sky.** 13 photographs picked from WeatherAPI's condition code and the city's local time of
+  day: dawn, day, golden hour, dusk or night. A clear night in Los Angeles shows stars; rain in Singapore shows
+  storm clouds.
+- **Today at a glance.** Current temperature, feels-like, high and low, and a daylight arc with sunrise, sunset and
+  time left.
+- **Hourly and 3-day forecasts.** 24 hours for today, tomorrow and the day after, plus a 3-day range view coloured by
+  temperature.
+- **Detail tiles.** Air quality (US EPA), UV index, wind with compass, humidity and dew point, feels-like,
+  visibility, pressure and cloud cover.
+- **Accurate search.** Suggestions as you type, full keyboard support, and exact-place selection, so San José,
+  Costa Rica never turns into San Jose, California.
+- **Saved places.** Pin up to 8 cities and see each one under its own sky and local time.
+- **Clock.** A full-screen standby clock over the current weather photo.
+- **Light and dark themes.** Follow your device or switch with the sun/moon toggle in the sidebar.
+- **Settings.** °C or °F, km/h or mph, theme, reduced motion, and a starting city.
+- **Accessible.** Visible keyboard focus, reduced motion respected, and search built as an ARIA combobox.
+
+## Screenshots
+
+| Saved places | Clock |
+| --- | --- |
+| ![Saved places: six cities, each with its own weather photo and local time](./docs/screenshots/saved-places.webp) | ![Full-screen clock over a starry night photo](./docs/screenshots/clock.webp) |
+
+<details>
+<summary>Full dashboard</summary>
+
+![The whole dashboard page, including all detail tiles](./docs/screenshots/dashboard-full.webp)
+
+</details>
 
 ## Tech stack
 
-React 19, Vite 7, Tailwind CSS 4, Motion, Lucide icons, [Meteocons](https://meteocons.com/) animated weather
-icons (MIT, Bas Milius), Bricolage Grotesque and Onest (self-hosted via Fontsource), Vitest.
-Weather data from [WeatherAPI.com](https://www.weatherapi.com/) (free plan, 3-day forecast).
+- **App:** React 19, Vite 7, Tailwind CSS 4, Motion
+- **Icons:** [Meteocons](https://meteocons.com/) animated weather icons (MIT, Bas Milius) and Lucide
+- **Fonts:** Bricolage Grotesque and Onest, self-hosted with Fontsource
+- **Data:** [WeatherAPI.com](https://www.weatherapi.com/), free plan with a 3-day forecast
+- **Hosting:** Vercel, with serverless functions for the API proxy
+- **Tests:** Vitest
 
 ## Getting started
 
+You need [Node.js](https://nodejs.org/) 20.19 or newer and a free [WeatherAPI.com](https://www.weatherapi.com/signup.aspx)
+key. Keys from other weather services, such as OpenWeatherMap, won't work.
+
 ```bash
+git clone https://github.com/radaxsumit/sky_cast.git
+cd sky_cast
 npm install
-cp .env.example .env   # then put your WeatherAPI key in .env
+cp .env.example .env
+```
+
+Open `.env` and add your key:
+
+```env
+WEATHER_API_KEY=your_weatherapi_key
+```
+
+Start the app at http://localhost:5173:
+
+```bash
 npm run dev
 ```
 
-```bash
-npm test        # unit tests (data mapping, photo + scene logic, proxy, search, cache)
-npm run lint
-npm run build
-```
+### Scripts
 
-### API key
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the dev server, including the local API proxy |
+| `npm test` | Runs the unit tests |
+| `npm run lint` | Checks the code with ESLint |
+| `npm run build` | Builds the production bundle into `dist/` |
 
-The key is **server-side only**. The browser calls `/api/weather` and `/api/search`. In production these are
-Vercel functions in `api/`; in development a small Vite middleware (`vite-plugin-weather-proxy.js`) serves the same
-routes, so `npm run dev` works without the Vercel CLI.
+> **Tip:** add `?scene=<phase>,<code>` to the URL to preview any photo, for example `?scene=night,1195` for heavy
+> rain at night. Phases are `dawn`, `day`, `golden`, `dusk` and `night`.
 
-| Variable          | Where                                                   |
-| ----------------- | ------------------------------------------------------- |
-| `WEATHER_API_KEY` | `.env` locally; Vercel → Project → Settings → Environment Variables |
+## Deploying to Vercel
 
-What the proxy (`api/_lib/weatherapi.js`) does:
+1. Import the repository in [Vercel](https://vercel.com/new). It detects Vite automatically.
+2. In **Project → Settings → Environment Variables**, add `WEATHER_API_KEY` for **Production** and **Preview**.
+3. Deploy. Every push to `main` updates the live site, and every pull request gets its own preview link.
 
-- Adds the key on the server only. The Network tab shows `/api/weather?q=…`, never the key or WeatherAPI's URL.
-- Returns only the fields the app uses (about 13 KB instead of WeatherAPI's 50 KB raw response).
-- Accepts `GET` only, validates `q` (letters, digits and place-name punctuation, max 100 characters) and ignores
-  every other parameter.
-- Refuses requests made by other websites (`Sec-Fetch-Site: cross-site`), so nobody can use your key from their page.
-- Rate-limits each visitor to 60 requests a minute.
-- Logs upstream key or quota errors on the server and shows users a generic message instead.
+## How the API key stays private
 
-The client shares identical requests already in flight and caches forecasts for 10 minutes, so the app never fires
-duplicate calls.
+The key never reaches the browser. The app only calls its own `/api/weather` and `/api/search` routes: Vercel
+functions in `api/` in production, and a small Vite middleware (`vite-plugin-weather-proxy.js`) during
+development. The proxy (`api/_lib/weatherapi.js`):
+
+- adds the key on the server, so the Network tab never shows it or WeatherAPI's address,
+- returns only the fields the app uses (about 13 KB instead of WeatherAPI's 50 KB response),
+- accepts `GET` only and validates the search text,
+- refuses requests from other websites, so nobody can use your key from their own page,
+- limits each visitor to 60 requests a minute,
+- logs key or quota problems on the server and shows visitors a plain message instead.
+
+In the browser, identical requests already in flight are shared and forecasts are cached for 10 minutes, so the app
+doesn't send duplicate calls.
 
 ## Project structure
 
 ```
-api/                      Vercel functions + shared proxy logic (api/_lib)
+api/                      Vercel functions and the shared proxy (api/_lib)
+public/                   App icons and web manifest
 src/
-  app/                    App shell, routing (hash), views: Dashboard, Saved, Clock, Settings, Coming soon
-  components/             hero, hourly, forecast, tiles, search, nav, ui
-  scene/                  resolveScene (local time + weather → phase), photo picker, ?scene= preview
-  hooks/                  weather loading, settings, saved cities, local clock, routing, reduced motion
-  lib/                    condition codes, icon mapping, time, units, AQI, descriptions, cache, chart maths
-  services/weatherApi.js  calls the proxy, normalises and caches responses
+  app/                    App shell, hash routing, views: Today, Saved, Clock, Settings, Map (coming soon)
+  components/             Hero, hourly, forecast, tiles, search, navigation, shared UI
+  scene/                  Local time + weather → time of day and photo choice
+  hooks/                  Weather loading, settings, saved places, local clock, theme, routing
+  lib/                    Condition codes, icons, time, units, AQI, descriptions, cache, chart maths
+  services/weatherApi.js  Calls the proxy, shares in-flight requests and caches responses
+  assets/photos/          Weather photographs
 tests/                    Vitest suites mirroring src/ and api/
-docs/                     design spec, implementation plan, screenshots
+docs/                     Screenshots, design spec and implementation plan
 ```
+
+## Credits
+
+Weather photographs are from [Unsplash](https://unsplash.com/license) and free to use:
+[clear day](https://unsplash.com/photos/TSgwbumanuE),
+[clear night](https://unsplash.com/photos/E0AHdsENmDg),
+[partly cloudy](https://unsplash.com/photos/MSrUdvVrKEE),
+[cloudy](https://unsplash.com/photos/9hIJJghBqb0),
+[rain](https://unsplash.com/photos/jYjuUXgi2NU),
+[rain at night](https://unsplash.com/photos/FGjR4IGwP7U),
+[thunderstorm](https://unsplash.com/photos/ESL1rIs9j48),
+[snow](https://unsplash.com/photos/R5SrmZPoO40),
+[fog](https://unsplash.com/photos/E0e1NmVclRo),
+[haze](https://unsplash.com/photos/iOrTzNpeSt8),
+[dawn](https://unsplash.com/photos/vTitvl4O2kE),
+[sunset](https://unsplash.com/photos/-IMlv9Jlb24) and
+[cloudy night](https://unsplash.com/photos/Q-NAk1DFYkA).
+
+Weather data by [WeatherAPI.com](https://www.weatherapi.com/).
 
 ## Author
 
@@ -89,21 +164,4 @@ docs/                     design spec, implementation plan, screenshots
 
 ## License
 
-MIT
-
-## Photo credits
-
-All weather photographs are from [Unsplash](https://unsplash.com/license) (free to use):
-[clear day](https://unsplash.com/photos/TSgwbumanuE) ·
-[clear night](https://unsplash.com/photos/E0AHdsENmDg) ·
-[partly cloudy](https://unsplash.com/photos/MSrUdvVrKEE) ·
-[cloudy](https://unsplash.com/photos/9hIJJghBqb0) ·
-[rain](https://unsplash.com/photos/jYjuUXgi2NU) ·
-[rain at night](https://unsplash.com/photos/FGjR4IGwP7U) ·
-[thunderstorm](https://unsplash.com/photos/ESL1rIs9j48) ·
-[snow](https://unsplash.com/photos/R5SrmZPoO40) ·
-[fog](https://unsplash.com/photos/E0e1NmVclRo) ·
-[haze](https://unsplash.com/photos/iOrTzNpeSt8) ·
-[dawn](https://unsplash.com/photos/vTitvl4O2kE) ·
-[sunset](https://unsplash.com/photos/-IMlv9Jlb24) ·
-[cloudy night](https://unsplash.com/photos/Q-NAk1DFYkA)
+[MIT](./LICENSE)
